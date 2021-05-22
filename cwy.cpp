@@ -29,8 +29,8 @@ int two[50];
 int pai[50]={0};
 
 inline VL PASSVL(){
-	return (lastValidComboPosition==landlordPosition&&
-	myPosition==landlordPosition)?0:-8;
+	return (lastValidComboPosition!=landlordPosition&&
+	myPosition!=landlordPosition)?0:-8;
 }
 inline VL SINGLEVL(int x){
 	if (x<13) return x/2-3;

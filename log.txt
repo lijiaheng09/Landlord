@@ -1,0 +1,7 @@
+res.cpp:1195:9: warning: 'SZ' macro redefined [-Wmacro-redefined]
+#define SZ(x) ((int)(x.size()))
+        ^
+res.cpp:956:9: note: previous definition is here
+#define SZ(x) ((int)x.size())
+        ^
+1 warning generated.

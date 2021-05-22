@@ -257,7 +257,7 @@ int procSearch(const CardCombo &c) {
 
 int search() {
 	int num = 2;
-	if (myCards.size() > 10)
+	if (myCards.size() > 6)
 		num = 1;
 	auto candidates = getCandidatesEval(num);
 	int ans = -INF;
