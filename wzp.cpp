@@ -56,23 +56,28 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	for(auto i:landlordPublicCards) to[i]--;
 	for(auto i:myCards) to[i]--;
 	vector<Card> v;
-	For(i,0,53)v.pb(i);
-	random_shuffle(v.begin(),v.end());
-	CardDistrib ans;
-	For(i,0,2){
-		if(i==myPosition){
-			ans[i]=myCards;
-		}else {
-			if(i==landlordPosition)
-				for(auto j:landlordPublicCards)
-					ans[i].insert(j);
-			For(j,0,cardRemaining[i]-1){
-				ans[i].insert(v.back());
-				v.pop_back();
+	For(i,0,53)if(to[i])v.pb(i);
+	vector<pair<CardDistrib, double>> res;
+	For(o,1,10*num){
+		random_shuffle(v.begin(),v.end());
+		int dq=0;
+		CardDistrib ans;
+		For(i,0,2){
+			if(i==myPosition){
+				ans[i]=myCards;
+			}else{
+				if(i==landlordPosition)
+					for(auto j:landlordPublicCards)
+						ans[i].insert(j);
+				For(j,0,cardRemaining[i]-1)
+					ans[i].insert(v[dq++]);
 			}
 		}
+		res.pb(mp(ans,1));
 	}
-	vector<pair<CardDistrib, double>> res;
-	res.pb(mp(ans,1));
+	unique(res.begin(),res.end());
+	if(res.size()<num)res.resize(num);
+	ld sum=0; for(auto &i:res)sum+=i.se;
+	for(auto &i:res)i.se/=sum;
 	return res;
 }
