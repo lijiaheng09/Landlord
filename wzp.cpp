@@ -44,7 +44,14 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
+const ld sigma=5;
+ld sqr(ld x){return x*x;}
+bool cmp(const pair<CardDistrib, double> &a,
+const pair<CardDistrib, double> &b){
+	return a.se>b.se;
+}
 std::vector<std::pair<CardDistrib, double>> randCards(int num){
+	double ti=clock();
 	int to[54]={1};
 	For(i,0,2){
 		for(auto j:whatTheyPlayed[i]){
@@ -58,7 +65,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
 	vector<pair<CardDistrib, double>> res;
-	For(o,1,10*num){
+	For(o,1,100000){
 		random_shuffle(v.begin(),v.end());
 		int dq=0;
 		CardDistrib ans;
@@ -76,6 +83,23 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		res.pb(mp(ans,1));
 	}
 	unique(res.begin(),res.end());
+	for(auto &i:res){
+		ld t=1;
+		int dq=myPosition;
+		vector<CardCombo> zs;
+		
+		while(whatTheyPlayed[myPosition].size()){
+			zs.pb(whatTheyPlayed[myPosition].back());
+			t*=exp(
+			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
+			(2*sigma*sigma))
+			/sqrt(2*M_PI)/sigma;
+			undoCombo();
+		}
+		for(;zs.size();zs.pop_back())doCombo(zs.back()); 
+		i.se=t;
+	}
+	sort(res.begin(),res.end(),cmp);
 	if(res.size()<num)res.resize(num);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
