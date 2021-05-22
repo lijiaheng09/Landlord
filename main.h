@@ -14,4 +14,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num);
 double evalCards(const CardSet &); // 期望得分
 double eval(const CardCombo &); // 期望得分
 
+CardSet cardSub(const CardSet &s, const CardCombo &c);
+CardSet cardAdd(const CardSet &s, const CardCombo &c);
+
 #endif
