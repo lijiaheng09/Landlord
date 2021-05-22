@@ -2,8 +2,11 @@
 #include "card.h"
 #include "main.h"
 
-int search() {
-	return 1;
+std::vector<CardCombo> candidates() {
+	return {};
+}
+
+int search(int score = 1) {
 }
 
 CardCombo getAction() {
