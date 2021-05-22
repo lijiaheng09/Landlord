@@ -2,3 +2,4 @@
 *.json
 *.o
 *.dSYM/
+gmon.out
