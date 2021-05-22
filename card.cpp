@@ -5,8 +5,30 @@
 // 游戏信息：http://www.botzone.org/games#FightTheLandlord2
 
 #include <bits/stdc++.h>
-#include "jsoncpp/json.h" // 在平台上，C++编译时默认包含此库
 #include "card.h"
+
+#ifndef _BOTZONE_ONLINE
+std::string cardComboStrings[] = {
+	"PASS",
+	"SINGLE",
+	"PAIR",
+	"STRAIGHT",
+	"STRAIGHT2",
+	"TRIPLET",
+	"TRIPLET1",
+	"TRIPLET2",
+	"BOMB",
+	"QUADRUPLE2",
+	"QUADRUPLE4",
+	"PLANE",
+	"PLANE1",
+	"PLANE2",
+	"SSHUTTLE",
+	"SSHUTTLE2",
+	"SSHUTTLE4",
+	"ROCKET",
+	"INVALID"};
+#endif
 
 using std::set;
 using std::sort;
@@ -14,13 +36,37 @@ using std::string;
 using std::unique;
 using std::vector;
 
-/**
-* 将Card变成Level
-*/
-constexpr Level card2level(Card card)
-{
-	return card / 4 + card / 53;
-}
+std::set<Card> myCards;
+
+// 地主明示的牌有哪些
+std::set<Card> landlordPublicCards;
+
+// 大家从最开始到现在都出过什么
+std::vector<CardCombo> whatTheyPlayed[PLAYER_COUNT];
+
+// 当前要出的牌需要大过谁
+CardCombo lastValidCombo;
+int lastValidComboPosition = -1;
+
+// 大家还剩多少牌
+short cardRemaining[PLAYER_COUNT] = {17, 17, 17};
+
+// 我是几号玩家（0-地主，1-农民甲，2-农民乙）
+int myPosition;
+
+// 地主位置
+int landlordPosition = -1;
+
+// 地主叫分
+int landlordBid = -1;
+
+// 阶段
+Stage stage = Stage::BIDDING;
+
+// 自己的第一回合收到的叫分决策
+std::vector<int> bidInput;
+
+CardDistrib dist;
 
 int CardCombo::findMaxSeq() const
 {
@@ -38,190 +84,6 @@ int CardCombo::getWeight() const
 		comboType == CardComboType::SSHUTTLE4)
 		return cardComboScores[(int)comboType] + (findMaxSeq() > 2) * 10;
 	return cardComboScores[(int)comboType];
-}
-
-template <typename CARD_ITERATOR>
-CardCombo::CardCombo(CARD_ITERATOR begin, CARD_ITERATOR end)
-{
-	// 特判：空
-	if (begin == end)
-	{
-		comboType = CardComboType::PASS;
-		return;
-	}
-
-	// 每种牌有多少个
-	short counts[MAX_LEVEL + 1] = {};
-
-	// 同种牌的张数（有多少个单张、对子、三条、四条）
-	short countOfCount[5] = {};
-
-	cards = vector<Card>(begin, end);
-	for (Card c : cards)
-		counts[card2level(c)]++;
-	for (Level l = 0; l <= MAX_LEVEL; l++)
-		if (counts[l])
-		{
-			packs.push_back(CardPack{l, counts[l]});
-			countOfCount[counts[l]]++;
-		}
-	sort(packs.begin(), packs.end());
-
-	// 用最多的那种牌总是可以比较大小的
-	comboLevel = packs[0].level;
-
-	// 计算牌型
-	// 按照 同种牌的张数 有几种 进行分类
-	vector<int> kindOfCountOfCount;
-	for (int i = 0; i <= 4; i++)
-		if (countOfCount[i])
-			kindOfCountOfCount.push_back(i);
-	sort(kindOfCountOfCount.begin(), kindOfCountOfCount.end());
-
-	int curr, lesser;
-
-	switch (kindOfCountOfCount.size())
-	{
-	case 1: // 只有一类牌
-		curr = countOfCount[kindOfCountOfCount[0]];
-		switch (kindOfCountOfCount[0])
-		{
-		case 1:
-			// 只有若干单张
-			if (curr == 1)
-			{
-				comboType = CardComboType::SINGLE;
-				return;
-			}
-			if (curr == 2 && packs[1].level == level_joker)
-			{
-				comboType = CardComboType::ROCKET;
-				return;
-			}
-			if (curr >= 5 && findMaxSeq() == curr &&
-				packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-			{
-				comboType = CardComboType::STRAIGHT;
-				return;
-			}
-			break;
-		case 2:
-			// 只有若干对子
-			if (curr == 1)
-			{
-				comboType = CardComboType::PAIR;
-				return;
-			}
-			if (curr >= 3 && findMaxSeq() == curr &&
-				packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-			{
-				comboType = CardComboType::STRAIGHT2;
-				return;
-			}
-			break;
-		case 3:
-			// 只有若干三条
-			if (curr == 1)
-			{
-				comboType = CardComboType::TRIPLET;
-				return;
-			}
-			if (findMaxSeq() == curr &&
-				packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-			{
-				comboType = CardComboType::PLANE;
-				return;
-			}
-			break;
-		case 4:
-			// 只有若干四条
-			if (curr == 1)
-			{
-				comboType = CardComboType::BOMB;
-				return;
-			}
-			if (findMaxSeq() == curr &&
-				packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-			{
-				comboType = CardComboType::SSHUTTLE;
-				return;
-			}
-		}
-		break;
-	case 2: // 有两类牌
-		curr = countOfCount[kindOfCountOfCount[1]];
-		lesser = countOfCount[kindOfCountOfCount[0]];
-		if (kindOfCountOfCount[1] == 3)
-		{
-			// 三条带？
-			if (kindOfCountOfCount[0] == 1)
-			{
-				// 三带一
-				if (curr == 1 && lesser == 1)
-				{
-					comboType = CardComboType::TRIPLET1;
-					return;
-				}
-				if (findMaxSeq() == curr && lesser == curr &&
-					packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-				{
-					comboType = CardComboType::PLANE1;
-					return;
-				}
-			}
-			if (kindOfCountOfCount[0] == 2)
-			{
-				// 三带二
-				if (curr == 1 && lesser == 1)
-				{
-					comboType = CardComboType::TRIPLET2;
-					return;
-				}
-				if (findMaxSeq() == curr && lesser == curr &&
-					packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-				{
-					comboType = CardComboType::PLANE2;
-					return;
-				}
-			}
-		}
-		if (kindOfCountOfCount[1] == 4)
-		{
-			// 四条带？
-			if (kindOfCountOfCount[0] == 1)
-			{
-				// 四条带两只 * n
-				if (curr == 1 && lesser == 2)
-				{
-					comboType = CardComboType::QUADRUPLE2;
-					return;
-				}
-				if (findMaxSeq() == curr && lesser == curr * 2 &&
-					packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-				{
-					comboType = CardComboType::SSHUTTLE2;
-					return;
-				}
-			}
-			if (kindOfCountOfCount[0] == 2)
-			{
-				// 四条带两对 * n
-				if (curr == 1 && lesser == 2)
-				{
-					comboType = CardComboType::QUADRUPLE4;
-					return;
-				}
-				if (findMaxSeq() == curr && lesser == curr * 2 &&
-					packs.begin()->level <= MAX_STRAIGHT_LEVEL)
-				{
-					comboType = CardComboType::SSHUTTLE4;
-					return;
-				}
-			}
-		}
-	}
-
-	comboType = CardComboType::INVALID;
 }
 
 bool CardCombo::canBeBeatenBy(const CardCombo &b) const
@@ -258,7 +120,7 @@ CardCombo CardCombo::findFirstValid(CARD_ITERATOR begin, CARD_ITERATOR end) cons
 		return CardCombo();
 
 	// 现在打算从手牌中凑出同牌型的牌
-	auto deck = vector<Card>(begin, end); // 手牌
+	auto deck = std::vector<Card>(begin, end); // 手牌
 	short counts[MAX_LEVEL + 1] = {};
 
 	unsigned short kindCount = 0;
@@ -332,7 +194,7 @@ CardCombo CardCombo::findFirstValid(CARD_ITERATOR begin, CARD_ITERATOR end) cons
 				}
 
 				// 开始产生解
-				vector<Card> solve;
+				std::vector<Card> solve;
 				for (Card c : deck)
 				{
 					Level level = card2level(c);
@@ -380,4 +242,3 @@ void CardCombo::debugPrint()
 }
 
 /* 状态 */
-

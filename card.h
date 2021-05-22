@@ -57,26 +57,7 @@ const int cardComboScores[] = {
 };
 
 #ifndef _BOTZONE_ONLINE
-std::string cardComboStrings[] = {
-	"PASS",
-	"SINGLE",
-	"PAIR",
-	"STRAIGHT",
-	"STRAIGHT2",
-	"TRIPLET",
-	"TRIPLET1",
-	"TRIPLET2",
-	"BOMB",
-	"QUADRUPLE2",
-	"QUADRUPLE4",
-	"PLANE",
-	"PLANE1",
-	"PLANE2",
-	"SSHUTTLE",
-	"SSHUTTLE2",
-	"SSHUTTLE4",
-	"ROCKET",
-	"INVALID"};
+extern std::string cardComboStrings[];
 #endif
 
 // 用0~53这54个整数表示唯一的一张牌
@@ -95,7 +76,13 @@ constexpr Level MAX_STRAIGHT_LEVEL = 11;
 constexpr Level level_joker = 13;
 constexpr Level level_JOKER = 14;
 
-constexpr Level card2level(Card card);
+/**
+* 将Card变成Level
+*/
+constexpr Level card2level(Card card)
+{
+	return card / 4 + card / 53;
+}
 
 // 牌的组合，用于计算牌型
 struct CardCombo
@@ -158,40 +145,43 @@ struct CardCombo
 	void debugPrint();
 };
 
-// 我的牌有哪些
-std::set<Card> myCards;
-
-// 地主明示的牌有哪些
-std::set<Card> landlordPublicCards;
-
-// 大家从最开始到现在都出过什么
-std::vector<CardCombo> whatTheyPlayed[PLAYER_COUNT];
-
-// 当前要出的牌需要大过谁
-CardCombo lastValidCombo;
-int lastValidComboPosition = -1;
-
-// 大家还剩多少牌
-short cardRemaining[PLAYER_COUNT] = {17, 17, 17};
-
-// 我是几号玩家（0-地主，1-农民甲，2-农民乙）
-int myPosition;
-
-// 地主位置
-int landlordPosition = -1;
-
-// 地主叫分
-int landlordBid = -1;
-
-// 阶段
-Stage stage = Stage::BIDDING;
-
-// 自己的第一回合收到的叫分决策
-std::vector<int> bidInput;
-
 using CardSet = std::set<Card>;
 using CardDistrib = std::array<CardSet, PLAYER_COUNT>;
 
-CardDistrib dist;
+// 我的牌有哪些
+extern std::set<Card> myCards;
+
+// 地主明示的牌有哪些
+extern std::set<Card> landlordPublicCards;
+
+// 大家从最开始到现在都出过什么
+extern std::vector<CardCombo> whatTheyPlayed[PLAYER_COUNT];
+
+// 当前要出的牌需要大过谁
+extern CardCombo lastValidCombo;
+extern int lastValidComboPosition;
+
+// 大家还剩多少牌
+extern short cardRemaining[PLAYER_COUNT];
+
+// 我是几号玩家（0-地主，1-农民甲，2-农民乙）
+extern int myPosition;
+
+// 地主位置
+extern int landlordPosition;
+
+// 地主叫分
+extern int landlordBid;
+
+// 阶段
+extern Stage stage;
+
+// 自己的第一回合收到的叫分决策
+extern std::vector<int> bidInput;
+
+extern CardDistrib dist;
+
+// 实现
+#include "card.hpp"
 
 #endif
