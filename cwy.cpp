@@ -37,9 +37,8 @@ inline VL SINGLEVL(int x){
 	else return 5;
 }
 inline VL PAIRVL(int x){
-	if (x<13) return x/2-3;
-	else if (x==13) return 4;
-	else return 5;
+	if (x<13) return x/2-1;
+	else assert(0);
 }
 inline VL STRAIGHTVL(int l, int len){
 	return len+l-4;
@@ -48,7 +47,7 @@ inline VL STRAIGHT2VL(int l,int len){
 	return len*2+l-4;
 }
 inline VL TRIPLETVL(int x){
-	return (x/2-1);
+	return (x/2+1);
 }
 inline VL TRIPLET1VL(int x){
 	return TRIPLETVL(x);
@@ -60,10 +59,10 @@ inline VL BOMBVL(int x){
 	return (8+x/3);
 }
 inline VL QUADRUPLE2VL(int x){
-	return (x/6+4);
+	return 1;
 }
 inline VL QUADRUPLE4VL(int x){
-	return 5;
+	return 1;
 }
 inline VL PLANEVL(int x){
 	return (x/6+4);
