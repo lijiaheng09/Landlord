@@ -6,7 +6,7 @@ std::vector<CardCombo> candidates() {
 	return {};
 }
 
-int search(int score = 1) {
+int search(int score) {
 }
 
 CardCombo getAction() {
