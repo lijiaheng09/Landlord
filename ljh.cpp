@@ -36,7 +36,7 @@ vector<pair<double, CardCombo>> getCandidatesEval(int num) {
 		candidates.resize(num);
 }
 
-void DoCombo(const CardCombo &c) {
+void doCombo(const CardCombo &c) {
 	whatTheyPlayed[myPosition].push_back(c);
 	if (c.comboType != CardComboType::PASS) {
 		lastValidCombo = c;
@@ -51,7 +51,7 @@ void DoCombo(const CardCombo &c) {
 	myCards = dist[myPosition];
 }
 
-void UndoCombo() {
+void undoCombo() {
 	myPosition = (myPosition + PLAYER_COUNT - 1) % PLAYER_COUNT;
 	const CardCombo &c = whatTheyPlayed[myPosition].back();
 	cardRemaining[myPosition] += c.cards.size();
@@ -80,11 +80,11 @@ int procSearch(const CardCombo &c) {
 	else {
 		bool is_landlord = myPosition == landlordPosition;
 
-		DoCombo(c);
+		doCombo(c);
 		ans = search();
 		if (is_landlord || (myPosition == landlordPosition))
 			ans = -ans;
-		UndoCombo();
+		undoCombo();
 	}
 	
 	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
