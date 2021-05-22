@@ -255,16 +255,23 @@ int procSearch(const CardCombo &c) {
 	return ans;
 }
 
+bool term_flag = 0;
+
 int search() {
+	static int cnt = 0;
 	int num = 3;
-	if (myCards.size() > 4)
+	if (myCards.size() > 3)
 		num = 2;
-	if (myCards.size() > 7)
+	if (myCards.size() > 6)
 		num = 1;
 	auto candidates = getCandidatesEval(num);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
+		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+			term_flag = 1;
+			return ans;
+		}
 		if (ans > 0)
 			break;
 	}
@@ -275,13 +282,16 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	for (auto &c : candidates) {
+	for (auto &c : candidates)
 		c.first = 0;
+	for (auto &c : candidates) {
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
 		}
+		if (term_flag)
+			break;
 	}
 	return max_element(candidates.begin(), candidates.end(), gt_first)->second;
 }
