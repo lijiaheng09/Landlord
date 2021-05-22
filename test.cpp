@@ -1,3 +1,4 @@
+#include <bits/stdc++.h>
 #include "main.h"
 #include "card.h"
 #include "jsoncpp/json.h"
