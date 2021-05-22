@@ -11,6 +11,7 @@ double getMean(); // 根据当前牌得到最优策略得分期望
 int search(); // 最优得分
 std::vector<CardCombo> getCandidates();
 std::vector<std::pair<CardDistrib, double>> randCards(int num);
+vector<pair<double, CardCombo>> getCandidatesEval(int num);
 double evalCards(const CardSet &); // 期望得分
 double eval(const CardCombo &); // 期望得分
 
