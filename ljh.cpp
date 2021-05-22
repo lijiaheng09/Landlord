@@ -112,34 +112,34 @@ vector<CardCombo> getCandidates() {
 
 	if (lastValidCombo.comboType == CardComboType::PASS) {
 		addCandidate({0}, 0);
-		bool pa = addCandidate({0, 0}, 0);
+		bool pa = addCandidate({0, 1}, 0);
 		vector<Card> v;
-		v = {0, 1, 2, 3};
+		v = {0, 4, 8, 12};
 		for (Card i = 4; i <= 11; i++) {
-			v.push_back(i);
+			v.push_back(i * 4);
 			if (!addCandidate(v, 0))
 				break;
 		}
 		if (pa) {
-			v = {0, 0, 1, 1};
+			v = {0, 1, 4, 5};
 			for (Card i = 2; i <= 11; i++) {
-				v.push_back(i);
-				v.push_back(i);
+				v.push_back(i * 4);
+				v.push_back(i * 4 + 1);
 				if (!addCandidate(v, 0))
 					break;
 			}
 
-			if (addCandidate({0, 0, 0}, 0)) {
-				if (addCandidate({0, 0, 0, 1}, 0))
-					addCandidate({0, 0, 0, 1, 1}, 0);
-				if (addCandidate({0, 0, 0, 0, 1, 2}, 0))
-					addCandidate({0, 0, 0, 0, 1, 1, 2, 2}, 0);
-				if (addCandidate({0, 0, 0, 1, 1, 1}, 0))
-					if (addCandidate({0, 0, 0, 1, 1, 1, 2, 3}, 0))
-						addCandidate({0, 0, 0, 1, 1, 1, 2, 2, 3, 3}, 0);
-				if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1}, 0))
-					if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 5}, 0))
-						addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5}, 0);
+			if (addCandidate({0, 1, 2}, 0)) {
+				if (addCandidate({0, 1, 2, 4}, 0))
+					addCandidate({0, 1, 2, 4, 5}, 0);
+				if (addCandidate({0, 1, 2, 3, 4, 5}, 0))
+					addCandidate({0, 1, 2, 3, 4, 5, 8, 9}, 0);
+				if (addCandidate({0, 1, 2, 4, 5, 6}, 0))
+					if (addCandidate({0, 1, 2, 4, 5, 6, 8, 12}, 0))
+						addCandidate({0, 1, 2, 4, 5, 6, 8, 9, 12, 13}, 0);
+				if (addCandidate({0, 1, 2, 3, 4, 5, 6, 7}, 0))
+					if (addCandidate({0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20}, 0))
+						addCandidate({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 16, 17, 20, 21}, 0);
 			}
 		}
 	} else {
@@ -256,8 +256,10 @@ int procSearch(const CardCombo &c) {
 }
 
 int search() {
-	int num = 2;
-	if (myCards.size() > 6)
+	int num = 3;
+	if (myCards.size() > 4)
+		num = 2;
+	if (myCards.size() > 7)
 		num = 1;
 	auto candidates = getCandidatesEval(num);
 	int ans = -INF;

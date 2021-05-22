@@ -184,9 +184,9 @@ extern std::vector<int> bidInput;
 extern CardDistrib dist;
 
 // 实现
-
 // #include "card.hpp"
 
+#endif
 #ifndef CARD_HPP
 #define CARD_HPP
 
@@ -378,7 +378,6 @@ CardCombo::CardCombo(CARD_ITERATOR begin, CARD_ITERATOR end)
 }
 
 #endif
-
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -403,10 +402,6 @@ void doCombo(const CardCombo &c);
 void undoCombo();
 
 #endif
-
-
-#endif
-
 // 斗地主·改（FightTheLandlord2）样例程序
 // 无脑策略
 // 最后修改：2021-05-08，去除了有问题的isArray。
@@ -1288,8 +1283,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 	return res;
-}
-// #include "main.h"
+}// #include "main.h"
 // #include "card.h"
 #include "jsoncpp/json.h"
 
