@@ -28,21 +28,23 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
-int search(int score) {
-	if (myCards.empty())
-		return score;
-	bool is_landlord = myPosition == landlordPosition;
+vector<pair<double, CardCombo>> getCandidatesEval(int num) {
 	vector<pair<double, CardCombo>> candidates;
 	for (auto &&c : getCandidates())
 		candidates.push_back({eval(c), c});
 	sort(candidates.begin(), candidates.end(), gt_first);
-	static const int NUM = 3;
-	if (candidates.size() > NUM)
-		candidates.resize(NUM);
-	int ans = -INF;
-	auto r_lastValidCombo = lastValidCombo;
-	for (auto &&cs : candidates) {
-		const CardCombo &c = cs.second;
+	if (candidates.size() > num)
+		candidates.resize(num);
+}
+
+int procSearch(const CardCombo &c) {
+	int ans;
+
+	if (myCards.size() == c.cards.size())
+		ans = 1;
+	else {
+		bool is_landlord = myPosition == landlordPosition;
+		auto r_lastValidCombo = lastValidCombo;
 		whatTheyPlayed[myPosition].push_back(c);
 		lastValidCombo = c;
 		dist[myPosition] = cardSub(dist[myPosition], c);
@@ -50,21 +52,55 @@ int search(int score) {
 		myPosition = (myPosition + 1) % 3;
 		myCards = dist[myPosition];
 
+		ans = search();
 		if (is_landlord || (myPosition == landlordPosition))
-			ans = max(ans, -search(score));
-		else
-			ans = max(ans, search(score));
+			ans = -ans;
 
 		myPosition = (myPosition + 2) % 3;
 		cardRemaining[myPosition] += c.cards.size();
-		dist[myPosition] = cardAdd(dist[myPosition], c);
+		myCards = dist[myPosition] = cardAdd(dist[myPosition], c);
 		whatTheyPlayed[myPosition].pop_back();
+		lastValidCombo = r_lastValidCombo;
 	}
-	lastValidCombo = r_lastValidCombo;
-	myCards = dist[myPosition];
+	
+	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
+		ans *= 2;
+
+	return ans;
+}
+
+int search() {
+	static const int NUM = 3;
+	auto candidates = getCandidatesEval(NUM);
+	int ans = -INF;
+	for (auto &&cs : candidates)
+		ans = max(ans, procSearch(cs.second));
+	return ans;
 }
 
 CardCombo getAction() {
-	static const int NUM = 20;
-	auto dists = randCards(NUM);
+	static const int DIST_NUM = 20, CAND_NUM = 10;
+	auto dists = randCards(DIST_NUM);
+	auto candidates = getCandidatesEval(CAND_NUM);
+	for (auto &c : candidates) {
+		c.first = 0;
+		for (auto &&d : dists) {
+			dist = d.first;
+			myCards = dist[myPosition];
+			c.first += d.second * procSearch(c.second);
+		}
+	}
+	return max_element(candidates.begin(), candidates.end(), gt_first)->second;
+}
+
+double getMean() {
+	static const int DIST_NUM = 20;
+	auto dists = randCards(DIST_NUM);
+	double ans = 0;
+	for (auto &&d : dists) {
+		dist = d.first;
+		myCards = dist[myPosition];
+		ans += d.second * search();
+	}
+	return ans;
 }
