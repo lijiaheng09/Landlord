@@ -33,7 +33,6 @@ namespace BotzoneIO
 		}
 
 		// history里第一项（上上家）和第二项（上家）分别是谁的决策
-		int whoInHistory[] = {(myPosition - 2 + PLAYER_COUNT) % PLAYER_COUNT, (myPosition - 1 + PLAYER_COUNT) % PLAYER_COUNT};
 
 		int turn = input["requests"].size();
 		for (int i = 0; i < turn; i++)
@@ -59,6 +58,8 @@ namespace BotzoneIO
 			if (history.isNull())
 				continue;
 			stage = Stage::PLAYING;
+		
+			int whoInHistory[] = {(myPosition - 2 + PLAYER_COUNT) % PLAYER_COUNT, (myPosition - 1 + PLAYER_COUNT) % PLAYER_COUNT};
 
 			// 逐次恢复局面到当前
 			int howManyPass = 0;

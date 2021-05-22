@@ -4,6 +4,9 @@ CXXFLAGS = -O2 -std=gnu++11
 ifeq ($(ver), debug)
 	CXXFLAGS = -g3 -std=gnu++11
 endif
+ifeq ($(ver), profile)
+	CXXFLAGS = -g3 -pg -std=gnu++11
+endif
 
 
 main: main.o card.o ljh.o wzp.o cwy.o

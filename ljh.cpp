@@ -256,7 +256,7 @@ int procSearch(const CardCombo &c) {
 }
 
 int search() {
-	static const int NUM = 3;
+	static const int NUM = 1;
 	auto candidates = getCandidatesEval(NUM);
 	int ans = -INF;
 	for (auto &&cs : candidates)

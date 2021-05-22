@@ -81,7 +81,8 @@ void call_player(int i)
 	static char Cmd[300];
 	write("input.json", input[i]);
 	sprintf(Cmd, "./%s <input.json >output.json", PLAYER[i].c_str());
-	system(Cmd);
+	if (system(Cmd))
+		exit(0);
 	Json::Value &t = data_log[data_log.size()][NAME[i]];
 	read("output.json", t);
 	t["verdict"] = "OK";

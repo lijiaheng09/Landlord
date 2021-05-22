@@ -52,20 +52,22 @@ const pair<CardDistrib, double> &b){
 }
 std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	double ti=clock();
-	int to[54]={1};
+	int to[54];
+	for(int i = 0; i < 54; i++)
+		to[i] = 1;
 	For(i,0,2){
 		for(auto j:whatTheyPlayed[i]){
 			for(auto k:j.cards){
-				to[k]--;
+				to[k]=0;
 			}
 		}
 	}
-	for(auto i:landlordPublicCards) to[i]--;
-	for(auto i:myCards) to[i]--;
+	for(auto i:landlordPublicCards) to[i]=0;
+	for(auto i:myCards) to[i]=0;
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
 	vector<pair<CardDistrib, double>> res;
-	For(o,1,100000){
+	For(o,1,1000){
 		random_shuffle(v.begin(),v.end());
 		int dq=0;
 		CardDistrib ans;
@@ -76,12 +78,13 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 				if(i==landlordPosition)
 					for(auto j:landlordPublicCards)
 						ans[i].insert(j);
-				For(j,0,cardRemaining[i]-1)
+				For(j,0,cardRemaining[i]-1-(i==landlordPosition)*3)
 					ans[i].insert(v[dq++]);
 			}
 		}
 		res.pb(mp(ans,1));
 	}
+	sort(res.begin(),res.end());
 	unique(res.begin(),res.end());
 	for(auto &i:res){
 		ld t=1;
@@ -100,7 +103,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		i.se=t;
 	}
 	sort(res.begin(),res.end(),cmp);
-	if(res.size()<num)res.resize(num);
+	if(res.size()>num)res.resize(num);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 	return res;
