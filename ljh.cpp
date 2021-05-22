@@ -2,7 +2,7 @@
 #include "card.h"
 #include "main.h"
 
-bool search() {
+int search() {
 	return 1;
 }
 
