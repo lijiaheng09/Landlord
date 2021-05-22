@@ -119,6 +119,8 @@ struct CardCombo
 	// 创建一个空牌组
 	CardCombo() : comboType(CardComboType::PASS) {}
 
+	CardCombo(const std::initializer_list<Card> &c) : CardCombo(c.begin(), c.end()) { }
+
 	CardCombo(const std::vector<Card> &c) : CardCombo(c.begin(), c.end()) {}
 
 	/**
