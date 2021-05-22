@@ -4,8 +4,7 @@
 
 using namespace std;
 
-std::vector<CardCombo> getCandidates() {
-	return {};
+vector<CardCombo> getCandidates() {
 }
 
 inline bool gt_first(const pair<double, CardCombo> &a, const pair<double, CardCombo> &b) {
@@ -37,6 +36,41 @@ vector<pair<double, CardCombo>> getCandidatesEval(int num) {
 		candidates.resize(num);
 }
 
+void DoCombo(const CardCombo &c) {
+	whatTheyPlayed[myPosition].push_back(c);
+	if (c.comboType != CardComboType::PASS) {
+		lastValidCombo = c;
+		lastValidComboPosition = myPosition;
+	} else if (lastValidComboPosition == (myPosition + 1) % PLAYER_COUNT) {
+		lastValidCombo = CardCombo();
+		lastValidComboPosition = -1;
+	}
+	dist[myPosition] = cardSub(dist[myPosition], c);
+	cardRemaining[myPosition] -= c.cards.size();
+	myPosition = (myPosition + 1) % PLAYER_COUNT;
+	myCards = dist[myPosition];
+}
+
+void UndoCombo(const CardCombo &c) {
+	myPosition = (myPosition + PLAYER_COUNT - 1) % PLAYER_COUNT;
+	cardRemaining[myPosition] += c.cards.size();
+	myCards = dist[myPosition] = cardAdd(dist[myPosition], c);
+	whatTheyPlayed[myPosition].pop_back();
+	lastValidCombo = CardCombo();
+	lastValidComboPosition = -1;
+	for (int p = 1; p < PLAYER_COUNT; p++) {
+		int pos = (myPosition + PLAYER_COUNT - p) % PLAYER_COUNT;
+		const auto &v = whatTheyPlayed[pos];
+		if (v.empty())
+			break;
+		const auto &d = v.back();
+		if (d.comboType != CardComboType::PASS) {
+			lastValidCombo = d;
+			lastValidComboPosition = pos;
+		}
+	}
+}
+
 int procSearch(const CardCombo &c) {
 	int ans;
 
@@ -44,23 +78,12 @@ int procSearch(const CardCombo &c) {
 		ans = 1;
 	else {
 		bool is_landlord = myPosition == landlordPosition;
-		auto r_lastValidCombo = lastValidCombo;
-		whatTheyPlayed[myPosition].push_back(c);
-		lastValidCombo = c;
-		dist[myPosition] = cardSub(dist[myPosition], c);
-		cardRemaining[myPosition] -= c.cards.size();
-		myPosition = (myPosition + 1) % 3;
-		myCards = dist[myPosition];
 
+		DoCombo(c);
 		ans = search();
 		if (is_landlord || (myPosition == landlordPosition))
 			ans = -ans;
-
-		myPosition = (myPosition + 2) % 3;
-		cardRemaining[myPosition] += c.cards.size();
-		myCards = dist[myPosition] = cardAdd(dist[myPosition], c);
-		whatTheyPlayed[myPosition].pop_back();
-		lastValidCombo = r_lastValidCombo;
+		UndoCombo(c);
 	}
 	
 	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)

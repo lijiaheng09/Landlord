@@ -169,6 +169,7 @@ std::vector<CardCombo> whatTheyPlayed[PLAYER_COUNT];
 
 // 当前要出的牌需要大过谁
 CardCombo lastValidCombo;
+int lastValidComboPosition = -1;
 
 // 大家还剩多少牌
 short cardRemaining[PLAYER_COUNT] = {17, 17, 17};

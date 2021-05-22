@@ -77,12 +77,16 @@ namespace BotzoneIO
 
 				if (playerAction.size() == 0)
 					howManyPass++;
-				else
+				else {
 					lastValidCombo = CardCombo(playedCards.begin(), playedCards.end());
+					lastValidComboPosition = player;
+				}
 			}
 
-			if (howManyPass == 2)
+			if (howManyPass == 2) {
 				lastValidCombo = CardCombo();
+				lastValidComboPosition = -1;
+			}
 
 			if (i < turn - 1)
 			{
