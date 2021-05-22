@@ -112,34 +112,34 @@ vector<CardCombo> getCandidates() {
 
 	if (lastValidCombo.comboType == CardComboType::PASS) {
 		addCandidate({0}, 0);
-		bool pa = addCandidate({0, 0}, 0);
+		bool pa = addCandidate({0, 1}, 0);
 		vector<Card> v;
-		v = {0, 1, 2, 3};
+		v = {0, 4, 8, 12};
 		for (Card i = 4; i <= 11; i++) {
-			v.push_back(i);
+			v.push_back(i * 4);
 			if (!addCandidate(v, 0))
 				break;
 		}
 		if (pa) {
-			v = {0, 0, 1, 1};
+			v = {0, 1, 4, 5};
 			for (Card i = 2; i <= 11; i++) {
-				v.push_back(i);
-				v.push_back(i);
+				v.push_back(i * 4);
+				v.push_back(i * 4 + 1);
 				if (!addCandidate(v, 0))
 					break;
 			}
 
-			if (addCandidate({0, 0, 0}, 0)) {
-				if (addCandidate({0, 0, 0, 1}, 0))
-					addCandidate({0, 0, 0, 1, 1}, 0);
-				if (addCandidate({0, 0, 0, 0, 1, 2}, 0))
-					addCandidate({0, 0, 0, 0, 1, 1, 2, 2}, 0);
-				if (addCandidate({0, 0, 0, 1, 1, 1}, 0))
-					if (addCandidate({0, 0, 0, 1, 1, 1, 2, 3}, 0))
-						addCandidate({0, 0, 0, 1, 1, 1, 2, 2, 3, 3}, 0);
-				if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1}, 0))
-					if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 5}, 0))
-						addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5}, 0);
+			if (addCandidate({0, 1, 2}, 0)) {
+				if (addCandidate({0, 1, 2, 4}, 0))
+					addCandidate({0, 1, 2, 4, 5}, 0);
+				if (addCandidate({0, 1, 2, 3, 4, 5}, 0))
+					addCandidate({0, 1, 2, 3, 4, 5, 8, 9}, 0);
+				if (addCandidate({0, 1, 2, 4, 5, 6}, 0))
+					if (addCandidate({0, 1, 2, 4, 5, 6, 8, 12}, 0))
+						addCandidate({0, 1, 2, 4, 5, 6, 8, 9, 12, 13}, 0);
+				if (addCandidate({0, 1, 2, 3, 4, 5, 6, 7}, 0))
+					if (addCandidate({0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20}, 0))
+						addCandidate({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 13, 16, 17, 20, 21}, 0);
 			}
 		}
 	} else {
@@ -255,14 +255,23 @@ int procSearch(const CardCombo &c) {
 	return ans;
 }
 
+bool term_flag = 0;
+
 int search() {
-	int num = 2;
+	static int cnt = 0;
+	int num = 3;
+	if (myCards.size() > 3)
+		num = 2;
 	if (myCards.size() > 6)
 		num = 1;
 	auto candidates = getCandidatesEval(num);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
+		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+			term_flag = 1;
+			return ans;
+		}
 		if (ans > 0)
 			break;
 	}
@@ -273,13 +282,16 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	for (auto &c : candidates) {
+	for (auto &c : candidates)
 		c.first = 0;
+	for (auto &c : candidates) {
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
 		}
+		if (term_flag)
+			break;
 	}
 	return max_element(candidates.begin(), candidates.end(), gt_first)->second;
 }
