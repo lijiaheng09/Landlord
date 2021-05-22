@@ -18,7 +18,7 @@ double eval(const CardCombo &); // 期望得分
 CardSet cardSub(const CardSet &s, const CardCombo &c);
 CardSet cardAdd(const CardSet &s, const CardCombo &c);
 
-void DoCombo(const CardCombo &c);
-void UndoCombo();
+void doCombo(const CardCombo &c);
+void undoCombo();
 
 #endif

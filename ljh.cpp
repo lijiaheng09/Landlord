@@ -52,8 +52,8 @@ void DoCombo(const CardCombo &c) {
 }
 
 void UndoCombo() {
-	const CardCombo &c = whatTheyPlayed[myPosition].back();
 	myPosition = (myPosition + PLAYER_COUNT - 1) % PLAYER_COUNT;
+	const CardCombo &c = whatTheyPlayed[myPosition].back();
 	cardRemaining[myPosition] += c.cards.size();
 	myCards = dist[myPosition] = cardAdd(dist[myPosition], c);
 	whatTheyPlayed[myPosition].pop_back();
