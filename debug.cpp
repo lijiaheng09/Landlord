@@ -112,7 +112,7 @@ void suan(VL vl){
 		int p2 = 1;
 		one[ones+1]=0;
 		two[twos+1]=0;
-		while (--thres){
+		while (thres--){
 			if (one[p1]<0 || two[p2]<0){
 				if (one[p1]<two[p2]) t -= one[p1], ++p1;
 				else t -= two[p2], ++p2;
@@ -126,6 +126,7 @@ void suan(VL vl){
 	mxvl=max(mxvl,t);
 }
 void shun2(VL vl, bool o){
+	/*
 	ts2=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp2[++ts2]=i;
@@ -145,9 +146,11 @@ void shun2(VL vl, bool o){
 			FOR(t,i,r) ++pai[t];
 		}
 	}
+	*/
 	suan(vl);
 }
 void shun1(VL vl){
+	/*
 	ts1=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp1[++ts1]=i;
@@ -165,10 +168,14 @@ void shun1(VL vl){
 			else break;
 		FOR(t,i,r) ++pai[t];
 	}
+	*/
 	shun2(vl,0);
 }
 
 void lian(){
+
+
+	/*
 	ts=0;
 	FOR(i,0,11) if (pai[i]>=2){
 		tmp[++ts]=i;
@@ -186,7 +193,7 @@ void lian(){
 			else break;
 		FOR(t,i,r) pai[t] += 2;
 	}
-
+*/
 	shun1(0);
 }
 
@@ -229,7 +236,13 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	mxvl = -VLRNG;
 	lian();
+	
+	cout<<mxvl*1.0<<' '<<CHUVL*1.0<<endl;
+	
 	return mxvl+tradeoff*CHUVL;
+
+
+
 	
 }
 
@@ -243,7 +256,7 @@ int main(){
 	myPosition = 0;
 	
 
-	vector<Card> v = {3,3,4,6,6,8,8,8,10,11,12,14,15,15};
+	vector<Card> v = {3,3,4,6,6,8,8,8,10,11,12,14,15,15,17};
 	myCards.clear();
 	FOR(i,0,SZ(v)-1){
 		if (v[i]<=15) myCards.insert((v[i]-3)*4+i%4);
@@ -251,7 +264,7 @@ int main(){
 		else myCards.insert(53);
 	}
 	
-	vector<Card> vv = {17};
+	vector<Card> vv = {10};
 	FOR(i,0,SZ(vv)-1){
 		if (vv[i]<=15) vv[i]=(vv[i]-3)*4+i%4;
 		else if (vv[i]==16) vv[i]=52;

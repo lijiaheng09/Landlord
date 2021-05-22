@@ -108,7 +108,7 @@ void suan(VL vl){
 		int p2 = 1;
 		one[ones+1]=0;
 		two[twos+1]=0;
-		while (--thres){
+		while (thres--){
 			if (one[p1]<0 || two[p2]<0){
 				if (one[p1]<two[p2]) t -= one[p1], ++p1;
 				else t -= two[p2], ++p2;
