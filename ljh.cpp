@@ -137,9 +137,9 @@ vector<CardCombo> getCandidates() {
 				if (addCandidate({0, 0, 0, 1, 1, 1}, 0))
 					if (addCandidate({0, 0, 0, 1, 1, 1, 2, 3}, 0))
 						addCandidate({0, 0, 0, 1, 1, 1, 2, 2, 3, 3}, 0);
-				if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1}))
-					if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 5}))
-						addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5});
+				if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1}, 0))
+					if (addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 3, 4, 5}, 0))
+						addCandidate({0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5}, 0);
 			}
 		}
 	} else {
