@@ -142,7 +142,7 @@ int main()
 		auto maxBidIt = std::max_element(bidInput.begin(), bidInput.end());
 		int maxBid = maxBidIt == bidInput.end() ? -1 : *maxBidIt;
 
-		int bidValue = rand() % (3 - maxBid) + maxBid + 1;
+		int bidValue = getBidValue(maxBid); // rand() % (3 - maxBid) + maxBid + 1;
 
 		// 决策结束，输出结果（你只需修改以上部分）
 
@@ -153,7 +153,8 @@ int main()
 		// 做出决策（你只需修改以下部分）
 
 		// findFirstValid 函数可以用作修改的起点
-		CardCombo myAction = lastValidCombo.findFirstValid(myCards.begin(), myCards.end());
+		CardCombo myAction = getAction();
+		// lastValidCombo.findFirstValid(myCards.begin(), myCards.end());
 
 		// 是合法牌
 		assert(myAction.comboType != CardComboType::INVALID);

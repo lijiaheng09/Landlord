@@ -186,4 +186,9 @@ Stage stage = Stage::BIDDING;
 // 自己的第一回合收到的叫分决策
 std::vector<int> bidInput;
 
+using CardSet = std::set<Card>;
+using CardDistrib = std::array<CardSet, PLAYER_COUNT>;
+
+CardDistrib dist;
+
 #endif
