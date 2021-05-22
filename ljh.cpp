@@ -172,6 +172,10 @@ inline bool gt_first(const pair<double, CardCombo> &a, const pair<double, CardCo
 	return a.first > b.first;
 }
 
+inline bool le_first(const pair<double, CardCombo> &a, const pair<double, CardCombo> &b) {
+	return a.first < b.first;
+}
+
 constexpr int INF = 0x3f3f3f3f;
 
 CardSet cardSub(const CardSet &s, const CardCombo &c) {
@@ -259,7 +263,7 @@ bool term_flag = 0;
 
 int search() {
 	static int cnt = 0;
-	int num = 3;
+	int num = 4;
 	if (myCards.size() > 3)
 		num = 2;
 	if (myCards.size() > 6)
@@ -269,6 +273,8 @@ int search() {
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+			if (!term_flag)
+				cerr << "TERM" << endl;
 			term_flag = 1;
 			return ans;
 		}
@@ -282,18 +288,22 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	for (auto &c : candidates)
-		c.first = 0;
 	for (auto &c : candidates) {
+		cerr << c.first << endl;
+		c.first = 0;
+		for (Card v : c.second.cards)
+			cerr << v << ' ';
+		cerr << endl;
+		double p = 0;
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
+			p += d.second;
 		}
-		if (term_flag)
-			break;
+		cerr << c.first << endl;
 	}
-	return max_element(candidates.begin(), candidates.end(), gt_first)->second;
+	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
 
 double getMean() {

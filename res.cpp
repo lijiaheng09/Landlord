@@ -1,3 +1,4 @@
+// card.h
 #ifndef CARD_H
 #define CARD_H
 
@@ -187,6 +188,8 @@ extern CardDistrib dist;
 // #include "card.hpp"
 
 #endif
+
+// card.hpp
 #ifndef CARD_HPP
 #define CARD_HPP
 
@@ -378,6 +381,8 @@ CardCombo::CardCombo(CARD_ITERATOR begin, CARD_ITERATOR end)
 }
 
 #endif
+
+// main.h
 #ifndef MAIN_H
 #define MAIN_H
 
@@ -402,6 +407,8 @@ void doCombo(const CardCombo &c);
 void undoCombo();
 
 #endif
+
+// card.cpp
 // 斗地主·改（FightTheLandlord2）样例程序
 // 无脑策略
 // 最后修改：2021-05-08，去除了有问题的isArray。
@@ -646,6 +653,8 @@ void CardCombo::debugPrint()
 }
 
 /* 状态 */
+
+// ljh.cpp
 #include <bits/stdc++.h>
 // #include "card.h"
 // #include "main.h"
@@ -820,6 +829,10 @@ inline bool gt_first(const pair<double, CardCombo> &a, const pair<double, CardCo
 	return a.first > b.first;
 }
 
+inline bool le_first(const pair<double, CardCombo> &a, const pair<double, CardCombo> &b) {
+	return a.first < b.first;
+}
+
 constexpr int INF = 0x3f3f3f3f;
 
 CardSet cardSub(const CardSet &s, const CardCombo &c) {
@@ -917,6 +930,8 @@ int search() {
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+			if (!term_flag)
+				cerr << "TERM" << endl;
 			term_flag = 1;
 			return ans;
 		}
@@ -933,15 +948,21 @@ CardCombo getAction() {
 	for (auto &c : candidates)
 		c.first = 0;
 	for (auto &c : candidates) {
+		// for (Card v : c.second.cards)
+			// cerr << v << ' ';
+		// cerr << endl;
+		double p = 0;
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
+			p += d.second;
 		}
+		// cerr << c.first << endl;
 		if (term_flag)
 			break;
 	}
-	return max_element(candidates.begin(), candidates.end(), gt_first)->second;
+	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
 
 double getMean() {
@@ -955,6 +976,8 @@ double getMean() {
 	}
 	return ans;
 }
+
+// cwy.cpp
 #include <bits/stdc++.h>
 #define pb push_back
 #define mp make_pair
@@ -1065,7 +1088,7 @@ void suan(VL vl){
 		int p2 = 1;
 		one[ones+1]=0;
 		two[twos+1]=0;
-		while (--thres){
+		while (thres--){
 			if (one[p1]<0 || two[p2]<0){
 				if (one[p1]<two[p2]) t -= one[p1], ++p1;
 				else t -= two[p2], ++p2;
@@ -1185,6 +1208,8 @@ double eval(const CardCombo & PAI){
 	return mxvl+tradeoff*CHUVL;
 	
 }
+
+// wzp.cpp
 #include<bits/stdc++.h>
 using namespace std;
 typedef long long ll;
@@ -1254,7 +1279,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
 	vector<pair<CardDistrib, double>> res;
-	For(o,1,1000){
+	For(o,1,2000){
 		random_shuffle(v.begin(),v.end());
 		int dq=0;
 		CardDistrib ans;
@@ -1295,7 +1320,10 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 	return res;
-}// #include "main.h"
+}
+
+// main.cpp
+// #include "main.h"
 // #include "card.h"
 #include "jsoncpp/json.h"
 
@@ -1474,3 +1502,4 @@ int main()
 		BotzoneIO::play(myAction.cards.begin(), myAction.cards.end());
 	}
 }
+

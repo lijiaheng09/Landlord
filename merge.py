@@ -12,8 +12,10 @@ files = [
 if __name__ == '__main__':
 	res = []
 	for f in files:
+		res.append('// ' + f + '\n')
 		with open(f, 'r') as fp:
 			res.extend(fp.readlines())
+		res.append('\n')
 	ress = []
 	for line in res:
 		if line.startswith('#include') and any([f in line for f in files]):

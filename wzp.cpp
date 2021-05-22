@@ -67,7 +67,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
 	vector<pair<CardDistrib, double>> res;
-	For(o,1,1000){
+	For(o,1,2000){
 		random_shuffle(v.begin(),v.end());
 		int dq=0;
 		CardDistrib ans;
