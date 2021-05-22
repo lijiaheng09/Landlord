@@ -137,7 +137,7 @@ namespace BotzoneIO
 
 int main()
 {
-	srand(time(nullptr));
+	// srand(time(nullptr));
 	BotzoneIO::read();
 
 	if (stage == Stage::BIDDING)

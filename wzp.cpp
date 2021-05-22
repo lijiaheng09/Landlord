@@ -85,14 +85,15 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		res.pb(mp(ans,1));
 	}
 	sort(res.begin(),res.end());
-	unique(res.begin(),res.end());
+	res.resize(unique(res.begin(),res.end()) - res.begin());
 	for(auto &i:res){
+		dist = i.first;
 		ld t=1;
 		int dq=myPosition;
 		vector<CardCombo> zs;
 		
-		while(whatTheyPlayed[myPosition].size()){
-			zs.pb(whatTheyPlayed[myPosition].back());
+		while(whatTheyPlayed[(myPosition+2)%3].size()){
+			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			t*=exp(
 			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
 			(2*sigma*sigma))

@@ -486,16 +486,16 @@ def main(full_input):
         else:
             printRequest(nextTurn, printContent, currTurn, currLandlord, solution, bidHistory)
     else:
-        setError(currPlayer, "LESS_COMPARE") # 现在的牌型比上一个牌型要小
+        setError(currTurn, "LESS_COMPARE") # 现在的牌型比上一个牌型要小
         solution[-1].clear()
         return
 
 if __name__ == '__main__':
-    # if _online:
-    full_input = json.loads(input())
-    # else:
-    #    with open("judgelogs.json") as fo:
-    #        full_input = json.load(fo)
+    if True or _online:
+        full_input = json.loads(input())
+    else:
+        with open("judgelogs.json") as fo:
+            full_input = json.load(fo)
     for x in full_input["log"]:
         if "output" in x and "display" in x["output"] and "errored" in x["output"]["display"]:
             errored = x["output"]["display"]["errored"]

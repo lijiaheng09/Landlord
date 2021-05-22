@@ -63,6 +63,13 @@ int call_judger()
 				requests[i]->append(t["content"][NAME[i]]);
 				nxt = i;
 			}
+		if(t.isMember("display") && t["display"].isMember("errored")) {
+			for (int p = 0; p < 3; p++)
+				if (t["display"]["errored"][p] != Json::nullValue) {
+					write("data.json", dat);
+					exit(0);
+				}
+		}
 	}
 	else {
 		printf(
@@ -71,6 +78,7 @@ int call_judger()
 			t["content"]["1"].asInt(),
 			t["content"]["2"].asInt()
 		);
+		write("data.json", dat);
 		exit(0);
 	}
 	return nxt;

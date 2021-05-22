@@ -256,11 +256,16 @@ int procSearch(const CardCombo &c) {
 }
 
 int search() {
-	static const int NUM = 1;
-	auto candidates = getCandidatesEval(NUM);
+	int num = 2;
+	if (myCards.size() > 10)
+		num = 1;
+	auto candidates = getCandidatesEval(num);
 	int ans = -INF;
-	for (auto &&cs : candidates)
+	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
+		if (ans > 0)
+			break;
+	}
 	return ans;
 }
 
