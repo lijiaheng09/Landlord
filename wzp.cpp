@@ -49,6 +49,6 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		}
 	}
 	vector<pair<CardDistrib, double>> res;
-	res.pb(ans);
+	res.pb(mp(ans,1));
 	return res;
 }
