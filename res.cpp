@@ -920,7 +920,7 @@ bool term_flag = 0;
 
 int search() {
 	static int cnt = 0;
-	int num = 3;
+	int num = 4;
 	if (myCards.size() > 3)
 		num = 2;
 	if (myCards.size() > 6)
@@ -945,22 +945,21 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	for (auto &c : candidates)
-		c.first = 0;
+	/* for (auto &&d : dists) {
+		cerr << d.second << endl;
+	} */
 	for (auto &c : candidates) {
-		// for (Card v : c.second.cards)
-			// cerr << v << ' ';
-		// cerr << endl;
-		double p = 0;
+		// cerr << c.first << endl;
+		c.first = 0;
+		/* for (Card v : c.second.cards)
+			cerr << v << ' ';
+		cerr << endl; */
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
-			p += d.second;
 		}
 		// cerr << c.first << endl;
-		if (term_flag)
-			break;
 	}
 	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
@@ -1256,7 +1255,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=5;
+const ld sigma=1;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){
@@ -1306,11 +1305,11 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		
 		while(whatTheyPlayed[(myPosition+2)%3].size()){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
+			undoCombo();
 			t*=exp(
 			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
 			(2*sigma*sigma))
 			/sqrt(2*M_PI)/sigma;
-			undoCombo();
 		}
 		for(;zs.size();zs.pop_back())doCombo(zs.back()); 
 		i.se=t;
@@ -1319,6 +1318,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	if(res.size()>num)res.resize(num);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
+	// cerr << "Sum: " << sum << endl;
 	return res;
 }
 
