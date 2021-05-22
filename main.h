@@ -8,7 +8,7 @@ int getBidValue(int maxBid); // 叫分
 CardCombo getAction(); // 出牌, 搜索记得维护全局变量
 double getMean(); // 根据当前牌得到最优策略得分期望
 
-int search(int score = 1); // 最优得分
+int search(); // 最优得分
 std::vector<CardCombo> getCandidates();
 std::vector<std::pair<CardDistrib, double>> randCards(int num);
 double evalCards(const CardSet &); // 期望得分
