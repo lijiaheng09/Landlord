@@ -51,7 +51,8 @@ void DoCombo(const CardCombo &c) {
 	myCards = dist[myPosition];
 }
 
-void UndoCombo(const CardCombo &c) {
+void UndoCombo() {
+	const CardCombo &c = whatTheyPlayed[myPosition].back();
 	myPosition = (myPosition + PLAYER_COUNT - 1) % PLAYER_COUNT;
 	cardRemaining[myPosition] += c.cards.size();
 	myCards = dist[myPosition] = cardAdd(dist[myPosition], c);
@@ -83,7 +84,7 @@ int procSearch(const CardCombo &c) {
 		ans = search();
 		if (is_landlord || (myPosition == landlordPosition))
 			ans = -ans;
-		UndoCombo(c);
+		UndoCombo();
 	}
 	
 	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
