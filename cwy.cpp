@@ -29,7 +29,8 @@ int two[50];
 int pai[50]={0};
 
 inline VL PASSVL(){
-	return -20;
+	return (lastValidComboPosition==landlordPosition&&
+	myPosition==landlordPosition)?0:-8;
 }
 inline VL SINGLEVL(int x){
 	if (x<13) return x/2-3;
@@ -224,6 +225,6 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	mxvl = -VLRNG;
 	lian();
-	return tradeoff*mxvl+CHUVL;
+	return mxvl+tradeoff*CHUVL;
 	
 }
