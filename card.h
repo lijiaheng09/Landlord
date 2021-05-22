@@ -132,6 +132,8 @@ struct CardCombo
 	// 创建一个空牌组
 	CardCombo() : comboType(CardComboType::PASS) {}
 
+	CardCombo(const std::vector<Card> &c) : CardCombo(c.begin(), c.end()) {}
+
 	/**
 	* 通过Card（即short）类型的迭代器创建一个牌型
 	* 并计算出牌型和大小序等
@@ -163,7 +165,7 @@ std::set<Card> myCards;
 std::set<Card> landlordPublicCards;
 
 // 大家从最开始到现在都出过什么
-std::vector<std::vector<Card>> whatTheyPlayed[PLAYER_COUNT];
+std::vector<CardCombo> whatTheyPlayed[PLAYER_COUNT];
 
 // 当前要出的牌需要大过谁
 CardCombo lastValidCombo;
