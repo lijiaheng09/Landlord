@@ -92,7 +92,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		int dq=myPosition;
 		vector<CardCombo> zs;
 		
-		while(whatTheyPlayed[(myPosition+2)%3].size()){
+		while(cardRemaining[landlordPosition]<20){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
 			t*=exp(
