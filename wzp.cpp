@@ -107,6 +107,8 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	if(res.size()>num)res.resize(num);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
-	// cerr << "Sum: " << sum << endl;
+#ifdef _LOG
+	cerr << "Sum: " << sum << endl;
+#endif
 	return res;
 }

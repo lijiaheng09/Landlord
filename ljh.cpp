@@ -273,8 +273,10 @@ int search() {
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+#ifdef _LOG
 			if (!term_flag)
 				cerr << "TERM" << endl;
+#endif
 			term_flag = 1;
 			return ans;
 		}

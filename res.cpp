@@ -930,8 +930,10 @@ int search() {
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+#ifdef _LOG
 			if (!term_flag)
 				cerr << "TERM" << endl;
+#endif
 			term_flag = 1;
 			return ans;
 		}
@@ -945,21 +947,28 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	/* for (auto &&d : dists) {
+#ifdef _LOG
+	for (auto &&d : dists) {
 		cerr << d.second << endl;
-	} */
+	}
+#endif
 	for (auto &c : candidates) {
-		// cerr << c.first << endl;
-		c.first = 0;
-		/* for (Card v : c.second.cards)
+#ifdef _LOG
+		cerr << c.first << endl;
+		for (Card v : c.second.cards)
 			cerr << v << ' ';
-		cerr << endl; */
+		cerr << endl;
+#endif
+		c.first = 0;
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
 		}
-		// cerr << c.first << endl;
+#ifdef _LOG
+		cerr << c.first << endl;
+		cerr << "----------" << endl;
+#endif
 	}
 	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
@@ -1303,7 +1312,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		int dq=myPosition;
 		vector<CardCombo> zs;
 		
-		while(whatTheyPlayed[(myPosition+2)%3].size()){
+		while(cardRemaining[landlordPosition]<20){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
 			t*=exp(
@@ -1318,7 +1327,9 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	if(res.size()>num)res.resize(num);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
-	// cerr << "Sum: " << sum << endl;
+#ifdef _LOG
+	cerr << "Sum: " << sum << endl;
+#endif
 	return res;
 }
 
