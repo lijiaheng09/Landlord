@@ -4,3 +4,6 @@
 *.dSYM/
 gmon.out
 main
+res
+report.txt
+run
