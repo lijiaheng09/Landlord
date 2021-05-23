@@ -44,7 +44,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=1;
+const ld sigma=1.0;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){

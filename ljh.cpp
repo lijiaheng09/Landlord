@@ -272,7 +272,7 @@ int search() {
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
-		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.95 * CLOCKS_PER_SEC)) {
 #ifdef _LOG
 			if (!term_flag)
 				cerr << "TERM" << endl;
@@ -287,8 +287,11 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 20, CAND_NUM = 10;
+	static const int DIST_NUM = 100, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
+#ifdef _LOG
+	cerr << (double)clock() / CLOCKS_PER_SEC << endl;
+#endif
 	auto candidates = getCandidatesEval(CAND_NUM);
 #ifdef _LOG
 	for (auto &&d : dists) {
@@ -302,21 +305,28 @@ CardCombo getAction() {
 			cerr << v << ' ';
 		cerr << endl;
 #endif
-		c.first = 0;
-		for (auto &&d : dists) {
-			dist = d.first;
-			myCards = dist[myPosition];
+		c.first *= 0.005;
+	}
+	for (auto &&d : dists) {
+		dist = d.first;
+		myCards = dist[myPosition];
+		for (auto &c : candidates) {
 			int r = procSearch(c.second);
 #ifdef _LOG
-		cerr << r << endl;
+			cerr << r << endl;
 #endif
 			c.first += d.second * r;
+			if (term_flag)
+				break;
 		}
-#ifdef _LOG
-		cerr << c.first << endl;
-		cerr << "----------" << endl;
-#endif
+		if (term_flag)
+			break;
 	}
+#ifdef _LOG
+	cerr << "Candidates Res" << endl;
+	for (auto &c : candidates)
+		cerr << c.first << endl;
+#endif
 	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
 
