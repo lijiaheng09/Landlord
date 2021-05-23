@@ -306,7 +306,11 @@ CardCombo getAction() {
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
-			c.first += d.second * procSearch(c.second);
+			int r = procSearch(c.second);
+#ifdef _LOG
+		cerr << r << endl;
+#endif
+			c.first += d.second * r;
 		}
 #ifdef _LOG
 		cerr << c.first << endl;
