@@ -288,21 +288,28 @@ CardCombo getAction() {
 	static const int DIST_NUM = 20, CAND_NUM = 10;
 	auto dists = randCards(DIST_NUM);
 	auto candidates = getCandidatesEval(CAND_NUM);
-	/* for (auto &&d : dists) {
+#ifdef _LOG
+	for (auto &&d : dists) {
 		cerr << d.second << endl;
-	} */
+	}
+#endif
 	for (auto &c : candidates) {
-		// cerr << c.first << endl;
-		c.first = 0;
-		/* for (Card v : c.second.cards)
+#ifdef _LOG
+		cerr << c.first << endl;
+		for (Card v : c.second.cards)
 			cerr << v << ' ';
-		cerr << endl; */
+		cerr << endl;
+#endif
+		c.first = 0;
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
 			c.first += d.second * procSearch(c.second);
 		}
-		// cerr << c.first << endl;
+#ifdef _LOG
+		cerr << c.first << endl;
+		cerr << "----------" << endl;
+#endif
 	}
 	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
