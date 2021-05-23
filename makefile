@@ -4,10 +4,10 @@ CXXFLAGS = -O2 -std=gnu++11
 log = false
 
 ifeq ($(ver), debug)
-	CXXFLAGS = -g3 -std=gnu++11
+	CXXFLAGS = -D_DEBUG -g3 -std=gnu++11
 endif
 ifeq ($(ver), profile)
-	CXXFLAGS = -g3 -pg -std=gnu++11
+	CXXFLAGS = -D_PROFILE -g3 -pg -std=gnu++11
 endif
 
 ifeq ($(log), true)

@@ -135,8 +135,12 @@ namespace BotzoneIO
 	}
 }
 
-int main()
+int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+	if (argc == 3 && !strcmp(argv[1], "-<-"))
+		freopen(argv[2], "r", stdin);
+#endif
 	// srand(time(nullptr));
 	BotzoneIO::read();
 
