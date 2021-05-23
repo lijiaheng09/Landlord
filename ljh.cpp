@@ -57,7 +57,7 @@ vector<CardCombo> getCandidates() {
 					if ((type == CardComboType::SINGLE && level > MAX_LEVEL) ||
 						(isSequential && level > MAX_STRAIGHT_LEVEL) ||
 						(type != CardComboType::SINGLE && !isSequential && level >= level_joker))
-						return 0;
+						return fl;
 
 					// 如果手牌中这种牌不够，就不用继续增了
 					if (counts[level] < pre.packs[j].count)

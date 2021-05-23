@@ -714,7 +714,7 @@ vector<CardCombo> getCandidates() {
 					if ((type == CardComboType::SINGLE && level > MAX_LEVEL) ||
 						(isSequential && level > MAX_STRAIGHT_LEVEL) ||
 						(type != CardComboType::SINGLE && !isSequential && level >= level_joker))
-						return 0;
+						return fl;
 
 					// 如果手牌中这种牌不够，就不用继续增了
 					if (counts[level] < pre.packs[j].count)
@@ -963,7 +963,11 @@ CardCombo getAction() {
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
-			c.first += d.second * procSearch(c.second);
+			int r = procSearch(c.second);
+#ifdef _LOG
+		cerr << r << endl;
+#endif
+			c.first += d.second * r;
 		}
 #ifdef _LOG
 		cerr << c.first << endl;
@@ -1471,8 +1475,12 @@ namespace BotzoneIO
 	}
 }
 
-int main()
+int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+	if (argc == 3 && !strcmp(argv[1], "-<-"))
+		freopen(argv[2], "r", stdin);
+#endif
 	// srand(time(nullptr));
 	BotzoneIO::read();
 
