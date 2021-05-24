@@ -44,7 +44,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=3.0;
+ld sigma=3.0;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){
@@ -91,10 +91,10 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		ld t=1;
 		int dq=myPosition;
 		vector<CardCombo> zs;
-		
 		while(cardRemaining[landlordPosition]<20){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
+			sigma=max(1,(int)whatTheyPlayed[myPosition].size());
 			t*=exp(
 			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
 			(2*sigma*sigma))

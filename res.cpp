@@ -956,8 +956,8 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10;
-	if (myCards.size() > THRESHOLD)
+	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
+	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5)
 		return getCandidatesEval(1)[0].second;
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
@@ -1295,7 +1295,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=3.0;
+ld sigma=3.0;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){
@@ -1309,14 +1309,14 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	For(i,0,2){
 		for(auto j:whatTheyPlayed[i]){
 			for(auto k:j.cards){
-				to[k]=0;
+				to[k]=-1;
 			}
 		}
 	}
 	for(auto i:landlordPublicCards) to[i]=0;
 	for(auto i:myCards) to[i]=0;
 	vector<Card> v;
-	For(i,0,53)if(to[i])v.pb(i);
+	For(i,0,53)if(to[i]==1)v.pb(i);
 	vector<pair<CardDistrib, double>> res;
 	For(o,1,2000){
 		random_shuffle(v.begin(),v.end());
@@ -1328,7 +1328,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 			}else{
 				if(i==landlordPosition)
 					for(auto j:landlordPublicCards)
-						ans[i].insert(j);
+						if(to[j]!=-1)ans[i].insert(j);
 				For(j,0,cardRemaining[i]-1-(i==landlordPosition)*3)
 					ans[i].insert(v[dq++]);
 			}
@@ -1342,10 +1342,10 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 		ld t=1;
 		int dq=myPosition;
 		vector<CardCombo> zs;
-		
 		while(cardRemaining[landlordPosition]<20){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
+			sigma=max(1,(int)whatTheyPlayed[myPosition].size());
 			t*=exp(
 			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
 			(2*sigma*sigma))
