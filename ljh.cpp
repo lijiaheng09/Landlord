@@ -192,14 +192,23 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEval(int num) {
+vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
+	max_sc = 1;
 	vector<pair<double, CardCombo>> candidates;
-	for (auto &&c : getCandidates())
+	for (auto &&c : getCandidates()) {
 		candidates.push_back({eval(c), c});
+		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
+			max_sc <<= 1;
+	}
 	sort(candidates.begin(), candidates.end(), gt_first);
 	if (candidates.size() > num)
 		candidates.resize(num);
 	return candidates;
+}
+
+vector<pair<double, CardCombo>> getCandidatesEval(int num) {
+	int dum;
+	return getCandidatesEval(num, dum);
 }
 
 void doCombo(const CardCombo &c) {
@@ -268,7 +277,8 @@ int search() {
 		num = 2;
 	if (myCards.size() > 6)
 		num = 1;
-	auto candidates = getCandidatesEval(num);
+	int max_sc;
+	auto candidates = getCandidatesEval(num, max_sc);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
@@ -282,7 +292,7 @@ int search() {
 			return ans;
 		}
 #endif
-		if (ans > 0)
+		if (ans == max_sc)
 			break;
 	}
 	return ans;
