@@ -956,7 +956,9 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10;
+	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10;
+	if (myCards.size() > THRESHOLD)
+		return getCandidatesEval(1)[0].second;
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
 	cerr << (double)clock() / CLOCKS_PER_SEC << endl;
@@ -1024,7 +1026,7 @@ using namespace std;
 typedef long long LL;
 typedef pair<int,int> pa;
 typedef vector<int> vec;
-typedef int VL;
+typedef double VL;
 // #include "card.h"
 // #include "main.h"
 
@@ -1036,7 +1038,7 @@ int ts;
 int tmp[50];
 int ts1;
 int tmp1[50];
-int ts2;
+int ts2,cnt;
 int tmp2[50];
 int one[50];
 int two[50];
@@ -1044,57 +1046,58 @@ int pai[50]={0};
 
 inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?0:-8;
+	myPosition!=landlordPosition)?0:-3;
 }
-inline VL SINGLEVL(int x){
-	if (x<13) return x/2-3;
-	else if (x==13) return 4;
-	else return 5;
+inline VL SINGLEVL(double x){
+	cnt++;
+	if (x<13) return x/2-3-cnt;
+	else if (x==13) return 4-cnt;
+	else return 5-cnt;
 }
-inline VL PAIRVL(int x){
+inline VL PAIRVL(double x){
 	if (x<13) return x/2-1;
 	else assert(0);
 }
-inline VL STRAIGHTVL(int l, int len){
+inline VL STRAIGHTVL(double l, double len){
 	return len+l-4;
 }
-inline VL STRAIGHT2VL(int l,int len){
+inline VL STRAIGHT2VL(double l,double len){
 	return len*2+l-4;
 }
-inline VL TRIPLETVL(int x){
+inline VL TRIPLETVL(double x){
 	return (x/2+1);
 }
-inline VL TRIPLET1VL(int x){
+inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
 }
-inline VL TRIPLET2VL(int x){
+inline VL TRIPLET2VL(double x){
 	return TRIPLETVL(x);
 }
-inline VL BOMBVL(int x){
+inline VL BOMBVL(double x){
 	return (8+x/3);
 }
-inline VL QUADRUPLE2VL(int x){
+inline VL QUADRUPLE2VL(double x){
 	return 1;
 }
-inline VL QUADRUPLE4VL(int x){
+inline VL QUADRUPLE4VL(double x){
 	return 1;
 }
-inline VL PLANEVL(int x){
+inline VL PLANEVL(double x){
 	return (x/6+4);
 }
-inline VL PLANE1VL(int x){
+inline VL PLANE1VL(double x){
 	return 5;
 }
-inline VL PLANE2VL(int x){
+inline VL PLANE2VL(double x){
 	return 6;
 }
-inline VL SSHUTTLEVL(int x){
+inline VL SSHUTTLEVL(double x){
 	return (x/6+5);
 }
-inline VL SSHUTTLE2VL(int x){
+inline VL SSHUTTLE2VL(double x){
 	return 6;
 }
-inline VL SSHUTTLE4VL(int x){
+inline VL SSHUTTLE4VL(double x){
 	return 6;
 }
 inline VL ROCKETVL(){
@@ -1107,6 +1110,7 @@ inline VL INVALIDVL(){
 
 void suan(VL vl){
 	VL t = vl;
+	cnt=-1;
 	int twos = 0;
 	int ones = 0;
 	int thres = 0;
@@ -1218,7 +1222,8 @@ double eval(const CardCombo & PAI){
 	for (auto x :myCards) ++pai[card2level(x)];
 	for (auto x :PAI.cards) --pai[card2level(x)];
 	VL CHUVL(0);
-	if (PAI.comboType == CardComboType::PASS) CHUVL += PASSVL();
+	if (PAI.comboType == CardComboType::PASS) CHUVL += PASSVL()-
+	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0);
 	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::PAIR) CHUVL += PAIRVL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::STRAIGHT) CHUVL += STRAIGHTVL(PAI.packs.back().level, SZ(PAI.packs));
@@ -1290,7 +1295,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=1.0;
+const ld sigma=3.0;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){

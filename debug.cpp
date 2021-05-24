@@ -32,7 +32,7 @@ int pai[50]={0};
 
 inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?0:-8;
+	myPosition!=landlordPosition)?0:-3;
 }
 
 

@@ -44,7 +44,7 @@ int getBidValue(int maxBid){
 	return cnt[1]>cnt[0]?0:3;
 }
 
-const ld sigma=1.0;
+const ld sigma=3.0;
 ld sqr(ld x){return x*x;}
 bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){
@@ -58,14 +58,14 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	For(i,0,2){
 		for(auto j:whatTheyPlayed[i]){
 			for(auto k:j.cards){
-				to[k]=0;
+				to[k]=-1;
 			}
 		}
 	}
 	for(auto i:landlordPublicCards) to[i]=0;
 	for(auto i:myCards) to[i]=0;
 	vector<Card> v;
-	For(i,0,53)if(to[i])v.pb(i);
+	For(i,0,53)if(to[i]==1)v.pb(i);
 	vector<pair<CardDistrib, double>> res;
 	For(o,1,2000){
 		random_shuffle(v.begin(),v.end());
@@ -77,7 +77,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 			}else{
 				if(i==landlordPosition)
 					for(auto j:landlordPublicCards)
-						ans[i].insert(j);
+						if(to[j]!=-1)ans[i].insert(j);
 				For(j,0,cardRemaining[i]-1-(i==landlordPosition)*3)
 					ans[i].insert(v[dq++]);
 			}
