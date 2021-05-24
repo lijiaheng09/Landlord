@@ -39,7 +39,7 @@ int getBidValue(int maxBid){
 				dist[i] = myCards;
 			else {
 				for (int j = 0; j < cardRemaining[i]; j++)
-					dist[j].insert(v[pc++]);
+					dist[i].insert(v[pc++]);
 			}
 		
 		int myPos0 = myPosition;
