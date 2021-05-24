@@ -23,25 +23,47 @@ int getBidValue(int maxBid){
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
 	ld jb=clock();
-	int cnt[2]={0};
+	ld zs[2] = {0.0L, 0.0L};
 	while((clock()-jb)/CLOCKS_PER_SEC<0.9){
 		random_shuffle(v.begin(),v.end());
 		landlordPublicCards.clear();
+
+		int pc = 0;
+
 		For(i,0,2){
-			landlordPublicCards.insert(v[i]);
+			landlordPublicCards.insert(v[pc++]);
 		}
-		ld zs[2];
-		For(j,0,1){
-			landlordPosition=(myPosition+j)%3;
-			if(!j)for(auto k:landlordPublicCards)myCards.insert(k);
-			landlordBid=3;
-			cardRemaining[landlordPosition]=20;
-			zs[j]=getMean(); if(!j)zs[0]*=2;
-			cardRemaining[landlordPosition]=17;
+
+		for (int i = 0; i < PLAYER_COUNT; i++)
+			if (i == myPosition)
+				dist[i] = myCards;
+			else {
+				for (int j = 0; j < cardRemaining[i]; j++)
+					dist[j].insert(v[pc++]);
+			}
+		
+		int myPos0 = myPosition;
+
+		for (int isLandlord : {0, 1}) {
+			int pc = 3;
+			landlordPosition = isLandlord ? myPosition : (myPosition + 1) % PLAYER_COUNT;
+			for (Card c : landlordPublicCards)
+				dist[landlordPosition].insert(c);
+			landlordBid = 3;
+			cardRemaining[landlordPosition] = 20;
+
+			myPosition = landlordPosition;
+			myCards = dist[myPosition];
+			zs[isLandlord] += search();
+			myPosition = myPos0;
+			myCards = dist[myPosition];
+
+			cardRemaining[landlordPosition] = 17;
+			for (Card c : landlordPublicCards)
+				dist[landlordPosition].erase(c);
 		}
-		cnt[zs[1]>zs[0]]++;
 	}
-	return cnt[1]>cnt[0]?0:3;
+	return 2.0L * zs[1] > -zs[0] ? 3 : 0;
 }
 
 ld sigma=3.0;
