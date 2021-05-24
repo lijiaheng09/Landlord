@@ -43,7 +43,7 @@ inline VL STRAIGHT2VL(double l,double len){
 	return l/4;
 }
 inline VL TRIPLETVL(double x){
-	return f(x)*1.2-1;
+	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1);
 }
 inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
