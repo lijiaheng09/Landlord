@@ -1035,38 +1035,32 @@ typedef double VL;
 const double tradeoff = 0.8;
 const VL VLRNG = 1000000000;
 VL mxvl;
-int ts;
-int tmp[50];
-int ts1;
-int tmp1[50];
-int ts2,cnt;
-int tmp2[50];
-int one[50];
-int two[50];
 int pai[50]={0};
 
 inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?0:-3;
+	myPosition!=landlordPosition)?0:-5;
+}
+inline double f(double x){
+	if(x<=8)return x/4;
+	if(x<=11)return 2+(x-8)/2;
+	return x-12+5;
 }
 inline VL SINGLEVL(double x){
-	cnt++;
-	if (x<13) return x/2-3-cnt;
-	else if (x==13) return 4-cnt;
-	else return 5-cnt;
+	return f(x)-2;
 }
 inline VL PAIRVL(double x){
-	if (x<13) return x/2-1;
+	if (x<13) return f(x)*1.2-1;
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
-	return len+l-4;
+	return (l+len/2)/4;
 }
 inline VL STRAIGHT2VL(double l,double len){
-	return len*2+l-4;
+	return l/4;
 }
 inline VL TRIPLETVL(double x){
-	return (x/2+1);
+	return f(x)*1.2-1;
 }
 inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
@@ -1108,10 +1102,11 @@ inline VL INVALIDVL(){
 	return -100;
 }
 
-
+int zs;
 void suan(VL vl){
+	static double one[50];
+	static double two[50];
 	VL t = vl;
-	cnt=-1;
 	int twos = 0;
 	int ones = 0;
 	int thres = 0;
@@ -1122,6 +1117,13 @@ void suan(VL vl){
 			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
 			else if (pai[i]==4) t+=BOMBVL(i);
 		}
+	//cerr<<t<<endl; exit(0);
+	//FOR(i,0,12)cerr<<pai[i]<<" ";
+	//cerr<<t<<" "<<ones<<" fjz ";
+	FOR(i,1,ones){
+		one[i]-=ones-i+zs; t-=ones-i+zs;
+	}
+	//cerr<<t<<" ";
 	if (thres){
 		int p1 = 1;
 		int p2 = 1;
@@ -1138,68 +1140,75 @@ void suan(VL vl){
 	if (pai[13] && pai[14]) t += ROCKETVL();
 	else if (pai[13]) t += SINGLEVL(13);
 	else if (pai[14]) t += SINGLEVL(14);
+	//if(t==5)cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
 	mxvl=max(mxvl,t);
 }
 void shun2(VL vl, bool o){
+	static int ts2;
+	static int tmp2[50];
 	ts2=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp2[++ts2]=i;
 	}
 	if (o){
 		FOR(i,1,ts2-4){
-			int r=i-1;
+			int r=tmp2[i]-1;
 			FOR(j,i+4,ts2)
-				if (tmp[j]-tmp[i]==j-i){
+				if (tmp2[j]-tmp2[i]==j-i){
 					while (1){
 						--pai[++r];
-						if (r==j) break;
+						if (r==tmp2[j]) break;
 					}
-					suan(vl+STRAIGHTVL(tmp[i],j-i+1));
+					suan(vl+STRAIGHTVL(tmp2[i],j-i+1));
 				}
 				else break;
-			FOR(t,i,r) ++pai[t];
+			FOR(t,tmp2[i],r) ++pai[t];
 		}
 	}
 	suan(vl);
 }
 void shun1(VL vl){
+	static int ts1;
+	static int tmp1[50];
 	ts1=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp1[++ts1]=i;
 	}
 	FOR(i,1,ts1-4){
-		int r=i-1;
+		int r=tmp1[i]-1;
 		FOR(j,i+4,ts1)
-			if (tmp[j]-tmp[i]==j-i){
+			if (tmp1[j]-tmp1[i]==j-i){
 				while (1){
 					--pai[++r];
-					if (r==j) break;
+					if (r==tmp1[j]) break;
 				}
-				shun2(vl+STRAIGHTVL(tmp[i],j-i+1),1);
+				shun2(vl+STRAIGHTVL(tmp1[i],j-i+1),1);
 			}
 			else break;
-		FOR(t,i,r) ++pai[t];
+		FOR(t,tmp1[i],r) ++pai[t];
 	}
 	shun2(vl,0);
 }
 
 void lian(){
+	static int ts;
+	static int tmp[50];
 	ts=0;
 	FOR(i,0,11) if (pai[i]>=2){
 		tmp[++ts]=i;
 	}
 	FOR(i,1,ts-2){
-		int r=i-1;
+		int r=tmp[i]-1;
 		FOR(j,i+2,ts)
 			if (tmp[j]-tmp[i]==j-i){
 				while (1){
 					pai[++r] -= 2;
-					if (r==j) break;
+					if (r==tmp[j]) break;
 				}
 				shun1(STRAIGHT2VL(tmp[i],j-i+1));
 			}
 			else break;
-		FOR(t,i,r) pai[t] += 2;
+		FOR(t,tmp[i],r) pai[t] += 2;
 	}
 
 	shun1(0);
@@ -1222,9 +1231,11 @@ double eval(const CardCombo & PAI){
 	
 	for (auto x :myCards) ++pai[card2level(x)];
 	for (auto x :PAI.cards) --pai[card2level(x)];
+	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	VL CHUVL(0);
-	if (PAI.comboType == CardComboType::PASS) CHUVL += PASSVL()-
-	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0);
+	if(PAI.comboType==CardComboType::SINGLE)zs=1; else zs=0;
+	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
+	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0));
 	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::PAIR) CHUVL += PAIRVL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::STRAIGHT) CHUVL += STRAIGHTVL(PAI.packs.back().level, SZ(PAI.packs));
@@ -1244,7 +1255,11 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::ROCKET) CHUVL += ROCKETVL();
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	mxvl = -VLRNG;
+
+	//for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
 	lian();
+	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
+	//cerr<<mxvl<<endl;
 	return mxvl+tradeoff*CHUVL;
 	
 }

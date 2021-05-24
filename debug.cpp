@@ -34,57 +34,55 @@ inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
 	myPosition!=landlordPosition)?0:-3;
 }
-
-
-inline VL SINGLEVL(int x){
+inline VL SINGLEVL(double x){
 	if (x<13) return x/2-3;
 	else if (x==13) return 4;
 	else return 5;
 }
-inline VL PAIRVL(int x){
+inline VL PAIRVL(double x){
 	if (x<13) return x/2-1;
 	else assert(0);
 }
-inline VL STRAIGHTVL(int l, int len){
-	return len+l-4;
+inline VL STRAIGHTVL(double l, double len){
+	return l/4;
 }
-inline VL STRAIGHT2VL(int l,int len){
-	return len*2+l-4;
+inline VL STRAIGHT2VL(double l,double len){
+	return l/4;
 }
-inline VL TRIPLETVL(int x){
-	return (x/2+1);
+inline VL TRIPLETVL(double x){
+	return (x/2-1);
 }
-inline VL TRIPLET1VL(int x){
+inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
 }
-inline VL TRIPLET2VL(int x){
+inline VL TRIPLET2VL(double x){
 	return TRIPLETVL(x);
 }
-inline VL BOMBVL(int x){
+inline VL BOMBVL(double x){
 	return (8+x/3);
 }
-inline VL QUADRUPLE2VL(int x){
+inline VL QUADRUPLE2VL(double x){
 	return 1;
 }
-inline VL QUADRUPLE4VL(int x){
+inline VL QUADRUPLE4VL(double x){
 	return 1;
 }
-inline VL PLANEVL(int x){
+inline VL PLANEVL(double x){
 	return (x/6+4);
 }
-inline VL PLANE1VL(int x){
+inline VL PLANE1VL(double x){
 	return 5;
 }
-inline VL PLANE2VL(int x){
+inline VL PLANE2VL(double x){
 	return 6;
 }
-inline VL SSHUTTLEVL(int x){
+inline VL SSHUTTLEVL(double x){
 	return (x/6+5);
 }
-inline VL SSHUTTLE2VL(int x){
+inline VL SSHUTTLE2VL(double x){
 	return 6;
 }
-inline VL SSHUTTLE4VL(int x){
+inline VL SSHUTTLE4VL(double x){
 	return 6;
 }
 inline VL ROCKETVL(){
@@ -96,6 +94,8 @@ inline VL INVALIDVL(){
 
 
 void suan(VL vl){
+	static int one[50];
+	static int two[50];
 	VL t = vl;
 	int twos = 0;
 	int ones = 0;
@@ -107,6 +107,9 @@ void suan(VL vl){
 			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
 			else if (pai[i]==4) t+=BOMBVL(i);
 		}
+	FOR(i,1,ones){
+		one[i]-=ones-i+1; t-=ones-i+1;
+	}
 	if (thres){
 		int p1 = 1;
 		int p2 = 1;
@@ -126,7 +129,8 @@ void suan(VL vl){
 	mxvl=max(mxvl,t);
 }
 void shun2(VL vl, bool o){
-	/*
+	static int ts2;
+	static int tmp2[50];
 	ts2=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp2[++ts2]=i;
@@ -135,22 +139,22 @@ void shun2(VL vl, bool o){
 		FOR(i,1,ts2-4){
 			int r=i-1;
 			FOR(j,i+4,ts2)
-				if (tmp[j]-tmp[i]==j-i){
+				if (tmp2[j]-tmp2[i]==j-i){
 					while (1){
 						--pai[++r];
 						if (r==j) break;
 					}
-					suan(vl+STRAIGHTVL(tmp[i],j-i+1));
+					suan(vl+STRAIGHTVL(tmp2[i],j-i+1));
 				}
 				else break;
 			FOR(t,i,r) ++pai[t];
 		}
 	}
-	*/
 	suan(vl);
 }
 void shun1(VL vl){
-	/*
+	static int ts1;
+	static int tmp1[50];
 	ts1=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp1[++ts1]=i;
@@ -158,24 +162,22 @@ void shun1(VL vl){
 	FOR(i,1,ts1-4){
 		int r=i-1;
 		FOR(j,i+4,ts1)
-			if (tmp[j]-tmp[i]==j-i){
+			if (tmp1[j]-tmp1[i]==j-i){
 				while (1){
 					--pai[++r];
 					if (r==j) break;
 				}
-				shun2(vl+STRAIGHTVL(tmp[i],j-i+1),1);
+				shun2(vl+STRAIGHTVL(tmp1[i],j-i+1),1);
 			}
 			else break;
 		FOR(t,i,r) ++pai[t];
 	}
-	*/
 	shun2(vl,0);
 }
 
 void lian(){
-
-
-	/*
+	static int ts;
+	static int tmp[50];
 	ts=0;
 	FOR(i,0,11) if (pai[i]>=2){
 		tmp[++ts]=i;
@@ -193,7 +195,7 @@ void lian(){
 			else break;
 		FOR(t,i,r) pai[t] += 2;
 	}
-*/
+
 	shun1(0);
 }
 
@@ -208,6 +210,7 @@ double evalCards(const CardSet & PAI){
 
 
 }
+
 
 double eval(const CardCombo & PAI){
 	FOR(i,0,14) pai[i]=0;
