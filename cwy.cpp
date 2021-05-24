@@ -22,7 +22,7 @@ int ts;
 int tmp[50];
 int ts1;
 int tmp1[50];
-int ts2,cnt;
+int ts2;
 int tmp2[50];
 int one[50];
 int two[50];
@@ -33,20 +33,19 @@ inline VL PASSVL(){
 	myPosition!=landlordPosition)?0:-3;
 }
 inline VL SINGLEVL(double x){
-	cnt++;
-	if (x<13) return x/2-3-cnt;
-	else if (x==13) return 4-cnt;
-	else return 5-cnt;
+	if (x<13) return x/2-3;
+	else if (x==13) return 4;
+	else return 5;
 }
 inline VL PAIRVL(double x){
 	if (x<13) return x/2-1;
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
-	return len+l-4;
+	return 0;
 }
 inline VL STRAIGHT2VL(double l,double len){
-	return len*2+l-4;
+	return 0;
 }
 inline VL TRIPLETVL(double x){
 	return (x/2+1);
@@ -94,7 +93,6 @@ inline VL INVALIDVL(){
 
 void suan(VL vl){
 	VL t = vl;
-	cnt=-1;
 	int twos = 0;
 	int ones = 0;
 	int thres = 0;
@@ -105,6 +103,9 @@ void suan(VL vl){
 			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
 			else if (pai[i]==4) t+=BOMBVL(i);
 		}
+	FOR(i,1,ones){
+		one[i]-=ones-i+1; t-=ones-i+1;
+	}
 	if (thres){
 		int p1 = 1;
 		int p2 = 1;
