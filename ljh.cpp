@@ -320,7 +320,7 @@ CardCombo getAction() {
 			cerr << v << ' ';
 		cerr << endl;
 #endif
-		c.first *= 0.001;
+		c.first *= 0.0002*cardRemaining[myPosition];
 	}
 	for (auto &&d : dists) {
 		dist = d.first;

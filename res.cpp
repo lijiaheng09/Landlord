@@ -957,6 +957,7 @@ int search() {
 
 CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
+
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5)
 		return getCandidatesEval(1)[0].second;
 	auto dists = randCards(DIST_NUM);
@@ -976,7 +977,7 @@ CardCombo getAction() {
 			cerr << v << ' ';
 		cerr << endl;
 #endif
-		c.first *= 0.005;
+		c.first *= 0.0002*cardRemaining[myPosition];
 	}
 	for (auto &&d : dists) {
 		dist = d.first;
