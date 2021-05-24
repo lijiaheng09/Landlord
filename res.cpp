@@ -789,7 +789,7 @@ vector<CardCombo> getCandidates() {
 			if (addCandidate({0, 1, 2}, 0)) {
 				if (addCandidate({0, 1, 2, 4}, 0))
 					addCandidate({0, 1, 2, 4, 5}, 0);
-				if (addCandidate({0, 1, 2, 3, 4, 5}, 0))
+				if (addCandidate({0, 1, 2, 3, 4, 8}, 0))
 					addCandidate({0, 1, 2, 3, 4, 5, 8, 9}, 0);
 				if (addCandidate({0, 1, 2, 4, 5, 6}, 0))
 					if (addCandidate({0, 1, 2, 4, 5, 6, 8, 12}, 0))
@@ -849,14 +849,23 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEval(int num) {
+vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
+	max_sc = 1;
 	vector<pair<double, CardCombo>> candidates;
-	for (auto &&c : getCandidates())
+	for (auto &&c : getCandidates()) {
 		candidates.push_back({eval(c), c});
+		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
+			max_sc <<= 1;
+	}
 	sort(candidates.begin(), candidates.end(), gt_first);
 	if (candidates.size() > num)
 		candidates.resize(num);
 	return candidates;
+}
+
+vector<pair<double, CardCombo>> getCandidatesEval(int num) {
+	int dum;
+	return getCandidatesEval(num, dum);
 }
 
 void doCombo(const CardCombo &c) {
@@ -925,10 +934,12 @@ int search() {
 		num = 2;
 	if (myCards.size() > 6)
 		num = 1;
-	auto candidates = getCandidatesEval(num);
+	int max_sc;
+	auto candidates = getCandidatesEval(num, max_sc);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
+#ifndef _DEBUG
 		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.95 * CLOCKS_PER_SEC)) {
 #ifdef _LOG
 			if (!term_flag)
@@ -937,7 +948,8 @@ int search() {
 			term_flag = 1;
 			return ans;
 		}
-		if (ans > 0)
+#endif
+		if (ans == max_sc)
 			break;
 	}
 	return ans;
@@ -970,7 +982,7 @@ CardCombo getAction() {
 		for (auto &c : candidates) {
 			int r = procSearch(c.second);
 #ifdef _LOG
-			cerr << r << endl;
+			// cerr << r << endl;
 #endif
 			c.first += d.second * r;
 			if (term_flag)
