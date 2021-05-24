@@ -75,36 +75,33 @@ vector<CardCombo> getCandidates() {
 					short requiredCounts[MAX_LEVEL + 1] = {};
 					for (int j = 0; j < mainPackCount; j++)
 						requiredCounts[pre.packs[j].level + i] = pre.packs[j].count;
-
-					function<void (unsigned, Level)> searchOthers = [&](unsigned j, Level from) {
-						if (j < pre.packs.size()) {
-							Level k;
-							for (k = from; k <= MAX_LEVEL; k++) {
-								if (requiredCounts[k] || counts[k] < pre.packs[j].count)
-									continue;
-								requiredCounts[k] = pre.packs[j].count;
-								searchOthers(j + 1, k + 1);
-								requiredCounts[k] = 0;
-							}
-						} else {
-							// 开始产生解
-							std::vector<Card> solve;
-							for (Card c : deck)
-							{
-								Level level = card2level(c);
-								if (requiredCounts[level])
-								{
-									solve.push_back(c);
-									requiredCounts[level]--;
-								}
-							}
-							fl = 1;
-							r.push_back(CardCombo(solve.begin(), solve.end()));
-							for (Card c : solve)
-								requiredCounts[card2level(c)]++;
+					for (unsigned j = mainPackCount; j < pre.packs.size(); j++)
+					{
+						Level k;
+						for (k = 0; k <= MAX_LEVEL; k++)
+						{
+							if (requiredCounts[k] || counts[k] < pre.packs[j].count)
+								continue;
+							requiredCounts[k] = pre.packs[j].count;
+							break;
 						}
-					};
-					searchOthers(mainPackCount, 0);
+						if (k == MAX_LEVEL + 1) // 如果是都不符合要求……就不行了
+							goto next;
+					}
+
+					// 开始产生解
+					std::vector<Card> solve;
+					for (Card c : deck)
+					{
+						Level level = card2level(c);
+						if (requiredCounts[level])
+						{
+							solve.push_back(c);
+							requiredCounts[level]--;
+						}
+					}
+					fl = 1;
+					r.push_back(CardCombo(solve.begin(), solve.end()));
 				}
 
 			next:; // 再增大
@@ -304,17 +301,8 @@ int search() {
 CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
 
-	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5) {
-#ifdef _LOG
-		auto candidates = getCandidatesEval(CAND_NUM);
-		for (auto &&c : candidates) {
-			for (auto &&v : c.second.cards)
-				cerr << v << ' ';
-			cerr << ": " << c.first << endl;
-		}
-#endif
+	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5)
 		return getCandidatesEval(1)[0].second;
-	}
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
 	cerr << (double)clock() / CLOCKS_PER_SEC << endl;
