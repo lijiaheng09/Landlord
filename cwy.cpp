@@ -42,13 +42,13 @@ inline VL PAIRVL(double x){
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
-	return 0;
+	return l/4;
 }
 inline VL STRAIGHT2VL(double l,double len){
-	return 0;
+	return l/4;
 }
 inline VL TRIPLETVL(double x){
-	return (x/2+1);
+	return (x/2-1);
 }
 inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
