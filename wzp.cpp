@@ -39,6 +39,7 @@ int getBidValue(int maxBid){
 			if (i == myPosition)
 				dist[i] = myCards;
 			else {
+				dist[i].clear();
 				for (int j = 0; j < cardRemaining[i]; j++)
 					dist[i].insert(v[pc++]);
 			}
@@ -56,12 +57,14 @@ int getBidValue(int maxBid){
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
 			zs[isLandlord] += search();
-			myPosition = myPos0;
-			myCards = dist[myPosition];
+			//cerr<<zs[0]<<" "<<zs[1]<<endl;
+			//cerr<<dist[1].size()<<endl; exit(0);
 
 			cardRemaining[landlordPosition] = 17;
 			for (Card c : landlordPublicCards)
 				dist[landlordPosition].erase(c);
+			myPosition = myPos0;
+			myCards = dist[myPosition];
 		}
 	}
 	return 2.0L * zs[1] > -zs[0] ? 3 : 0;
