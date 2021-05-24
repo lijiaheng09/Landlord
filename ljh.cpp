@@ -301,8 +301,20 @@ int search() {
 CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
 
-	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5)
+	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + 3) > 5) {
+#ifdef _LOG
+		cerr << "Candidates:" << endl;
+		auto candidates = getCandidatesEval(100);
+		for (auto &c : candidates) {
+			cerr << c.first << endl;
+			for (Card v : c.second.cards)
+				cerr << v << ' ';
+			cerr << endl;
+			cerr << "----------" << endl;
+		}
+#endif
 		return getCandidatesEval(1)[0].second;
+	}
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
 	cerr << "Rand Time: " << (double)clock() / CLOCKS_PER_SEC << endl;
@@ -321,6 +333,7 @@ CardCombo getAction() {
 		for (Card v : c.second.cards)
 			cerr << v << ' ';
 		cerr << endl;
+		cerr << "----------" << endl;
 #endif
 		c.first *= 0.0002*cardRemaining[myPosition];
 	}
