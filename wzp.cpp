@@ -109,7 +109,10 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	}
 	sort(res.begin(),res.end());
 	res.resize(unique(res.begin(),res.end()) - res.begin());
+	int cnt = 0;
 	for(auto &i:res){
+		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC)
+			break;
 		dist = i.first;
 		ld t=1;
 		int dq=myPosition;

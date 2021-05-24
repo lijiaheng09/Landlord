@@ -305,13 +305,15 @@ CardCombo getAction() {
 		return getCandidatesEval(1)[0].second;
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
-	cerr << (double)clock() / CLOCKS_PER_SEC << endl;
+	cerr << "Rand Time: " << (double)clock() / CLOCKS_PER_SEC << endl;
 #endif
 	auto candidates = getCandidatesEval(CAND_NUM);
 #ifdef _LOG
+	cerr << "Dist Prob:" << endl;
 	for (auto &&d : dists) {
 		cerr << d.second << endl;
 	}
+	cerr << "Candidates:" << endl;
 #endif
 	for (auto &c : candidates) {
 #ifdef _LOG
@@ -338,7 +340,7 @@ CardCombo getAction() {
 			break;
 	}
 #ifdef _LOG
-	cerr << "Candidates Res" << endl;
+	cerr << "Candidates Res:" << endl;
 	for (auto &c : candidates)
 		cerr << c.first << endl;
 #endif
