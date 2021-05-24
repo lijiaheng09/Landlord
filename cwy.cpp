@@ -95,7 +95,7 @@ void suan(VL vl){
 	int thres = 0;
 	FOR(i,0,12)
 		if (pai[i]){
-			if (pai[i]==1) t+=(one[++ones]=SINGLEVL(i));
+			if (pai[i]==1) {t+=(one[++ones]=SINGLEVL(i)); if(i>10)ones--;}
 			else if (pai[i]==2) t+=(two[++twos]=PAIRVL(i));
 			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
 			else if (pai[i]==4) t+=BOMBVL(i);
@@ -216,7 +216,7 @@ double eval(const CardCombo & PAI){
 	for (auto x :PAI.cards) --pai[card2level(x)];
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	VL CHUVL(0);
-	if(PAI.comboType==CardComboType::SINGLE)zs=1; else zs=0;
+	if(PAI.comboType==CardComboType::SINGLE&&PAI.cards[0]<=10)zs=1; else zs=0;
 	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
 	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0));
 	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level);
