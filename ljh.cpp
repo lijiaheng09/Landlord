@@ -299,7 +299,9 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10;
+	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10;
+	if (myCards.size() > THRESHOLD)
+		return getCandidatesEval(1)[0].second;
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
 	cerr << (double)clock() / CLOCKS_PER_SEC << endl;
