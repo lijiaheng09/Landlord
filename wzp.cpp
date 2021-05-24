@@ -18,7 +18,8 @@ typedef double ld;
 #include "main.h"
 int getBidValue(int maxBid){
 	
-	int to[54]={1};
+	int to[54];
+	for(int &x:to) x=1;
 	for(auto i:myCards) to[i]--;
 	vector<Card> v;
 	For(i,0,53)if(to[i])v.pb(i);
