@@ -18,14 +18,6 @@ typedef double VL;
 const double tradeoff = 0.8;
 const VL VLRNG = 1000000000;
 VL mxvl;
-int ts;
-int tmp[50];
-int ts1;
-int tmp1[50];
-int ts2;
-int tmp2[50];
-int one[50];
-int two[50];
 int pai[50]={0};
 
 inline VL PASSVL(){
@@ -92,6 +84,8 @@ inline VL INVALIDVL(){
 
 
 void suan(VL vl){
+	static int one[50];
+	static int two[50];
 	VL t = vl;
 	int twos = 0;
 	int ones = 0;
@@ -125,6 +119,8 @@ void suan(VL vl){
 	mxvl=max(mxvl,t);
 }
 void shun2(VL vl, bool o){
+	static int ts2;
+	static int tmp2[50];
 	ts2=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp2[++ts2]=i;
@@ -133,12 +129,12 @@ void shun2(VL vl, bool o){
 		FOR(i,1,ts2-4){
 			int r=i-1;
 			FOR(j,i+4,ts2)
-				if (tmp[j]-tmp[i]==j-i){
+				if (tmp2[j]-tmp2[i]==j-i){
 					while (1){
 						--pai[++r];
 						if (r==j) break;
 					}
-					suan(vl+STRAIGHTVL(tmp[i],j-i+1));
+					suan(vl+STRAIGHTVL(tmp2[i],j-i+1));
 				}
 				else break;
 			FOR(t,i,r) ++pai[t];
@@ -147,6 +143,8 @@ void shun2(VL vl, bool o){
 	suan(vl);
 }
 void shun1(VL vl){
+	static int ts1;
+	static int tmp1[50];
 	ts1=0;
 	FOR(i,0,11) if (pai[i]){
 		tmp1[++ts1]=i;
@@ -154,12 +152,12 @@ void shun1(VL vl){
 	FOR(i,1,ts1-4){
 		int r=i-1;
 		FOR(j,i+4,ts1)
-			if (tmp[j]-tmp[i]==j-i){
+			if (tmp1[j]-tmp1[i]==j-i){
 				while (1){
 					--pai[++r];
 					if (r==j) break;
 				}
-				shun2(vl+STRAIGHTVL(tmp[i],j-i+1),1);
+				shun2(vl+STRAIGHTVL(tmp1[i],j-i+1),1);
 			}
 			else break;
 		FOR(t,i,r) ++pai[t];
@@ -168,6 +166,8 @@ void shun1(VL vl){
 }
 
 void lian(){
+	static int ts;
+	static int tmp[50];
 	ts=0;
 	FOR(i,0,11) if (pai[i]>=2){
 		tmp[++ts]=i;
