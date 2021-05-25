@@ -52,7 +52,7 @@ inline VL TRIPLET2VL(double x){
 	return TRIPLETVL(x);
 }
 inline VL BOMBVL(double x){
-	return (8+x/3);
+	return max(PAIRVL(x)+PAIRVL(x),8+x/3);
 }
 inline VL QUADRUPLE2VL(double x){
 	return 1;

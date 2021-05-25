@@ -56,7 +56,10 @@ int getBidValue(int maxBid){
 
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
-			zs[isLandlord] += search();
+			double t=search();
+			if(isLandlord==1) t=t>0?t*1.2:t*0.5;
+			else t=t<0?t*0.5:t*1.2;
+			zs[isLandlord] += t;
 			//cerr<<zs[0]<<" "<<zs[1]<<endl;
 			//cerr<<dist[1].size()<<endl; exit(0);
 
@@ -67,6 +70,7 @@ int getBidValue(int maxBid){
 			myCards = dist[myPosition];
 		}
 	}
+	cerr<<-zs[0]<<" "<<zs[1]<<endl;
 	return 2.0L * zs[1] > -zs[0] ? 3 : 0;
 }
 
