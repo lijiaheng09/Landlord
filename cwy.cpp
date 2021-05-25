@@ -216,7 +216,7 @@ double eval(const CardCombo & PAI){
 	for (auto x :PAI.cards) --pai[card2level(x)];
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	VL CHUVL(0);
-	if(PAI.comboType==CardComboType::SINGLE&&PAI.cards[0]<=10)zs=1; else zs=0;
+	if(PAI.comboType==CardComboType::SINGLE&&card2level(PAI.cards[0])<=10)zs=1; else zs=0;
 	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
 	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0));
 	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level);
@@ -238,11 +238,10 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::ROCKET) CHUVL += ROCKETVL();
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	mxvl = -VLRNG;
-
 	//for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
 	lian();
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
-	//cerr<<mxvl<<endl;
+	//cerr<<mxvl<<" "<<CHUVL<<" "<<zs<<endl;
 	return mxvl+tradeoff*CHUVL;
 	
 }
