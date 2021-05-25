@@ -85,6 +85,8 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	int to[54];
 	for(int i = 0; i < 54; i++)
 		to[i] = 1;
+	for(auto i:landlordPublicCards) to[i]=0;
+	for(auto i:myCards) to[i]=0;
 	For(i,0,2){
 		for(auto j:whatTheyPlayed[i]){
 			for(auto k:j.cards){
@@ -92,8 +94,6 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 			}
 		}
 	}
-	for(auto i:landlordPublicCards) to[i]=0;
-	for(auto i:myCards) to[i]=0;
 	vector<Card> v;
 	For(i,0,53)if(to[i]==1)v.pb(i);
 	vector<pair<CardDistrib, double>> res;
@@ -108,7 +108,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 				if(i==landlordPosition)
 					for(auto j:landlordPublicCards)
 						if(to[j]!=-1)ans[i].insert(j);
-				For(j,0,cardRemaining[i]-1-(i==landlordPosition)*3)
+				while (ans[i].size() < cardRemaining[i])
 					ans[i].insert(v[dq++]);
 			}
 		}
