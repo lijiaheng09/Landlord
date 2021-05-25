@@ -43,7 +43,7 @@ inline VL STRAIGHT2VL(double l,double len){
 	return l/4;
 }
 inline VL TRIPLETVL(double x){
-	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?5.1:0);
+	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?5:0);
 }
 inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
@@ -99,7 +99,8 @@ void suan(VL vl){
 			if(i>10)ones--;}
 			else if (pai[i]==2) 
 				t+=(two[++twos]=PAIRVL(i));
-			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
+			else if (pai[i]==3) {t+=TRIPLETVL(i);
+			if(i<12)++thres;}
 			else if (pai[i]==4) t+=BOMBVL(i);
 			if(i>11)zz+=pai[i];
 		}
