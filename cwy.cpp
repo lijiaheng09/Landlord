@@ -95,14 +95,18 @@ void suan(VL vl){
 	int thres = 0;
 	FOR(i,0,12)
 		if (pai[i]){
-			if (pai[i]==1) {t+=(one[++ones]=SINGLEVL(i)); if(i>10)ones--;}
-			else if (pai[i]==2) t+=(two[++twos]=PAIRVL(i));
+			if (pai[i]==1) {t+=(one[++ones]=SINGLEVL(i)); 
+			if(i>10)ones--;}
+			else if (pai[i]==2) 
+				t+=(two[++twos]=PAIRVL(i));
 			else if (pai[i]==3) t+=TRIPLETVL(i),++thres;
 			else if (pai[i]==4) t+=BOMBVL(i);
+			if(i>11)ones-=pai[i];
 		}
 	//cerr<<t<<endl; exit(0);
 	//FOR(i,0,12)cerr<<pai[i]<<" ";
 	//cerr<<t<<" "<<ones<<" fjz ";
+	
 	FOR(i,1,ones){
 		one[i]-=ones-i+zs; t-=ones-i+zs;
 	}
@@ -123,7 +127,7 @@ void suan(VL vl){
 	if (pai[13] && pai[14]) t += ROCKETVL();
 	else if (pai[13]) t += SINGLEVL(13);
 	else if (pai[14]) t += SINGLEVL(14);
-	//if(t==5)cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
+	//if(t==10.375)cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
 	mxvl=max(mxvl,t);
 }
 void shun2(VL vl, bool o){
@@ -238,7 +242,7 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::ROCKET) CHUVL += ROCKETVL();
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	mxvl = -VLRNG;
-	//for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
+	// for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
 	lian();
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<mxvl<<" "<<CHUVL<<" "<<zs<<endl;
