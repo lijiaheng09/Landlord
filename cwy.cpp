@@ -108,7 +108,7 @@ void suan(VL vl){
 	//cerr<<t<<" "<<ones<<" fjz ";
 	
 	FOR(i,1,ones){
-		one[i]-=ones-i+zs; t-=ones-i+zs;
+		one[i]-=ones-i+zs+1; t-=ones-i+zs+1;
 	}
 	//cerr<<t<<" ";
 	if (thres){
