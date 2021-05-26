@@ -303,7 +303,7 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
+	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 8, THRESHOLD_OTHERS = 2;
 
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
 #ifdef _LOG
