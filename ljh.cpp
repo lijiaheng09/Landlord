@@ -301,7 +301,7 @@ void extendDown(Node *p) {
 		auto candidates = getCandidatesEval(-1, p->max_sc);
 		bool def = 1;
 		for (auto &&c : candidates) {
-			Node *t = new Node(p->v + log(c.first) + 0.2, c.second, p);
+			Node *t = new Node(p->v + log(c.first), c.second, p);
 			if (Init) {
 				candidateNodes.push_back(t);
 				rawEval[c.second] = c.first;
@@ -379,7 +379,9 @@ void searchCandidates(double w, double TL) {
 			sc = pow(sc, 0.8);
 		else
 			sc = -pow(-sc, 1.2);*/
-		// cerr << w << ' ' << sc << endl;
+#ifdef _LOG
+		cerr << w << ' ' << sc << endl;
+#endif
 		if (!resEval.count(c))
 			resEval[c] = 0.0;
 		resEval[c] += w * sc;

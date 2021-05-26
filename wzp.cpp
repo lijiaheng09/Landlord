@@ -26,7 +26,7 @@ int getBidValue(int maxBid){
 	ld jb=clock();
 	ld zs[2] = {0.0L, 0.0L};
 	double TL = 0;
-	while(TL<0.9){
+	while (clock() < 0.75 * CLOCKS_PER_SEC && TL < 0.75) {
 		random_shuffle(v.begin(),v.end());
 		landlordPublicCards.clear();
 
@@ -57,7 +57,7 @@ int getBidValue(int maxBid){
 
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
-			double t=search(TL += 0.05);
+			double t=search(TL += 0.1);
 			if(isLandlord==1) t=t>0?t*1.2:t*0.5;
 			else t=t<0?t*0.5:t*1.2;
 			zs[isLandlord] += t;
@@ -71,7 +71,9 @@ int getBidValue(int maxBid){
 			myCards = dist[myPosition];
 		}
 	}
+#ifdef _LOG
 	cerr<<-zs[0]<<" "<<zs[1]<<endl;
+#endif
 	return 2.0L * zs[1] > -zs[0] ? 3 : 0;
 }
 
@@ -148,7 +150,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	for (auto &&i : res) mint = min(mint, i.second);
 	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
-	for(auto &i:res)i.se=min(i.se/sum,0.2);
+	for(auto &i:res)i.se=min(i.se/sum,0.1);
 	sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG

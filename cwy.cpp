@@ -250,7 +250,7 @@ double eval(const CardCombo & PAI){
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<" "<<TRIPLETVL(12)<<endl;
 
-	static const double mu = 0.3; // 估价每大 1, 出牌概率大 e^mu
+	static const double mu = 0.1; // 估价每大 1, 出牌概率大 e^mu
 	return (mxvl+tradeoff*CHUVL) * mu;
 	
 }
