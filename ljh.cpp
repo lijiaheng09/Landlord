@@ -403,7 +403,7 @@ CardCombo getAction() {
 	for (int i = 0; i < num; i++) {
 		dist = dists[i].first;
 		searchCandidates(dists[i].second, startTime + vTime * (i + 1));
-		if (clock() > 0.9 * CLOCKS_PER_SEC)
+		if (clock() > 0.85 * CLOCKS_PER_SEC)
 			break;
 	}
 	double val = -INFINITY;
