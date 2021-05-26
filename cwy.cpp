@@ -15,7 +15,7 @@ typedef double VL;
 #include "main.h"
 
 
-const double tradeoff = 0.8;
+double tradeoff = 0.8;
 const VL VLRNG = 1000000000;
 VL mxvl;
 int pai[50]={0};
@@ -219,6 +219,9 @@ double eval(const CardCombo & PAI){
 	
 	for (auto x :myCards) ++pai[card2level(x)];
 	for (auto x :PAI.cards) --pai[card2level(x)];
+	vector<Card> cwy; FOR(i,0,14)FOR(j,0,pai[i]-1)cwy.pb(i*4+j);
+	if((CardCombo(cwy)).comboType!=CardComboType::INVALID)tradeoff=1.2;
+	else tradeoff=0.8;
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	VL CHUVL(0); fl=1;
 	if(PAI.comboType==CardComboType::SINGLE&&card2level(PAI.cards[0])<=10)zs=1; else zs=0;
