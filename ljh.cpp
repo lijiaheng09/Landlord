@@ -369,8 +369,12 @@ int search(double TL) {
 
 void searchCandidates(double w, double TL) {
 	search(TL);
-	for (Node *p : candidateNodes)
-		resEval[p->c] += w * p->sc;
+	bool is_enemy = myPosition == landlordPosition || (myPosition + 1) % PLAYER_COUNT == landlordPosition;
+	for (Node *t : candidateNodes) {
+		const CardCombo &c = t->c;
+		int mul_sc = c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET ? 2 : 1;
+		resEval[c] += w * mul_sc * (is_enemy ? -t->sc : t->sc);
+	}
 }
 
 CardCombo getAction() {
