@@ -234,10 +234,10 @@ failure:
 	return CardCombo();
 }
 
-void CardCombo::debugPrint()
+void CardCombo::debugPrint() const
 {
 #ifndef _BOTZONE_ONLINE
-	std::cout << "【" << cardComboStrings[(int)comboType] << "共" << cards.size() << "张，大小序" << comboLevel << "】";
+	std::cerr << "【" << cardComboStrings[(int)comboType] << "共" << cards.size() << "张，大小序" << comboLevel << "】";
 #endif
 }
 

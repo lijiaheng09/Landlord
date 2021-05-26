@@ -264,6 +264,7 @@ void undoCombo() {
 		if (d.comboType != CardComboType::PASS) {
 			lastValidCombo = d;
 			lastValidComboPosition = pos;
+			break;
 		}
 	}
 }
@@ -400,9 +401,8 @@ CardCombo getAction() {
 	for (auto &&p : resEval) {
 		p.second += 0.02 * cardRemaining[myPosition] * log(rawEval[p.first]);
 #ifdef _LOG
-		for (Card k : p.first.cards)
-			cerr << k << ' ';
-		cerr << ": " << rawEval[p.first] << ' ' << log(rawEval[p.first]) << ' ' << p.second << endl;
+		p.first.debugPrint();
+		cerr << rawEval[p.first] << ' ' << log(rawEval[p.first]) << ' ' << p.second << endl;
 #endif
 		if (p.second > val) {
 			res = p.first;

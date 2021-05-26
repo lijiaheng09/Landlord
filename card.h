@@ -153,7 +153,7 @@ struct CardCombo
 	template <typename CARD_ITERATOR>
 	CardCombo findFirstValid(CARD_ITERATOR begin, CARD_ITERATOR end) const;
 
-	void debugPrint();
+	void debugPrint() const;
 };
 
 using CardSet = std::set<Card>;
