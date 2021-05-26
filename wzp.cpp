@@ -145,6 +145,8 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	for (auto &&i : res) mint = min(mint, i.second);
 	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
+	for(auto &i:res)i.se=min(i.se/sum,0.2);
+	sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG
 	cerr << "Sum: " << sum << endl;
