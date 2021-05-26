@@ -33,14 +33,16 @@ inline VL SINGLEVL(double x){
 	return f(x)-2;
 }
 inline VL PAIRVL(double x){
-	if (x<13) return x==12?6:f(x)*1.2-1;
+	if (x<13) return x==12?6:f(x)*1.2-1.5;
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
-	return (l+len/2)/4;
+	return (l+len/2)/4-(1-fl)*((len-5)/2+
+	max((double)0,8-(myCards.size()-len)));
 }
 inline VL STRAIGHT2VL(double l,double len){
-	return l/4;
+	return l/4-(1-fl)*((len-3)+
+	max((double)0,6-(myCards.size()-len)));
 }
 inline VL TRIPLETVL(double x){
 	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);

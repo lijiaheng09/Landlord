@@ -25,7 +25,11 @@ int getBidValue(int maxBid){
 	For(i,0,53)if(to[i])v.pb(i);
 	ld jb=clock();
 	ld zs[2] = {0.0L, 0.0L};
+	int cnt=0;
 	while((clock()-jb)/CLOCKS_PER_SEC<0.9){
+		#ifdef _LOG 
+			cnt++;
+		#endif
 		random_shuffle(v.begin(),v.end());
 		landlordPublicCards.clear();
 
@@ -60,10 +64,11 @@ int getBidValue(int maxBid){
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
 			double t=search();
+			
+			//cerr<<(isLandlord?t:-t)<<" "; if(isLandlord==1)cerr<<endl;
 			if(t>1)t=1; else if(t<-1)t=-1;
 			if(isLandlord==1) t=t>0?t*1:t;
-			else t=t<0?t:t;
-			//cerr<<(isLandlord?t:-t)<<" "; if(isLandlord==1)cerr<<endl;
+			else t=t<0?t*0.7:t;
 			zs[isLandlord] += t;
 			//cerr<<zs[0]<<" "<<zs[1]<<endl;
 			//cerr<<dist[1].size()<<endl; exit(0);
@@ -75,6 +80,9 @@ int getBidValue(int maxBid){
 			myCards = dist[myPosition];
 		}
 	}
+	#ifdef _LOG
+		cerr<<cnt<<endl;
+	#endif
 	cerr<<"farmer:"<<-zs[0]<<" landlord:"<<2*zs[1]<<endl;
 	return 2.0L * zs[1] > -zs[0]&&zs[1]>0 ? 3 : 0;
 }
