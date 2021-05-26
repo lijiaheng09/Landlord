@@ -350,7 +350,7 @@ void extend(Node *p) {
 void update(double TL) {
 	int cnt = 0;
 	while (!Q.empty()) {
-		if ((++cnt & 128) == 0 && clock() > TL * CLOCKS_PER_SEC)
+		if ((++cnt & 127) == 0 && clock() > TL * CLOCKS_PER_SEC)
 			break;
 		Node *p = Q.top();
 		Q.pop();

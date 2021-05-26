@@ -118,9 +118,10 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	sort(res.begin(),res.end());
 	res.resize(unique(res.begin(),res.end()) - res.begin());
 	int cnt = 0;
+	int myPos0 = myPosition;
 	for(auto &i:res){
 #ifndef _DEBUG
-		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC) {
+		if ((++cnt & 127) == 0 && clock() > 0.1 * CLOCKS_PER_SEC) {
 #ifdef _LOG
 			cerr << "TERM DIST" << ' ' << cnt << endl;
 #endif
@@ -135,7 +136,8 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
 			sigma=max(1,(int)whatTheyPlayed[myPosition].size());
-			t+=eval(zs.back());
+			if (myPosition != myPos0)
+				t+=eval(zs.back());
 		}
 		for(;zs.size();zs.pop_back())doCombo(zs.back()); 
 		i.se=t;
@@ -146,6 +148,8 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	for (auto &&i : res) mint = min(mint, i.second);
 	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
+	for(auto &i:res)i.se=min(i.se/sum,0.2);
+	sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG
 	cerr << "Sum: " << sum << endl;
