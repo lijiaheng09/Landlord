@@ -374,7 +374,12 @@ void searchCandidates(double w, double TL) {
 	for (Node *t : candidateNodes) {
 		const CardCombo &c = t->c;
 		int mul_sc = c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET ? 2 : 1;
-		resEval[c] += w * mul_sc * (is_enemy ? -t->sc : t->sc);
+		double sc = mul_sc * (is_enemy ? -t->sc : t->sc);
+		if (sc >= 0)
+			sc = pow(sc, 0.8);
+		else
+			sc = -pow(-sc, 1.2);
+		resEval[c] += w * sc;
 	}
 }
 
@@ -399,11 +404,11 @@ CardCombo getAction() {
 	double val = -INFINITY;
 	CardCombo res;
 	for (auto &&p : resEval) {
-		p.second += 0.02 * cardRemaining[myPosition] * log(rawEval[p.first]);
 #ifdef _LOG
 		p.first.debugPrint();
 		cerr << rawEval[p.first] << ' ' << log(rawEval[p.first]) << ' ' << p.second << endl;
 #endif
+		p.second += 0.02 * cardRemaining[myPosition] * log(rawEval[p.first]);
 		if (p.second > val) {
 			res = p.first;
 			val = p.second;
