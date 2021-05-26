@@ -105,11 +105,11 @@ void suan(VL vl){
 			if(i>11)zz+=pai[i];
 		}
 	//FOR(i,0,12)cerr<<pai[i]<<" ";
-	//cerr<<t<<" "<<ones<<" fjz ";
-	
+	//cerr<<t<<" "<<ones<<" "<<zs<<" fjz ";
+	zz=zs+1+ones-max(zz,1);
 	FOR(i,1,ones){
-		int tt=max(0,ones-i-zz+zs+1);
-		one[i]-=tt; t-=tt;
+		int tt=max(0,zz-i);
+		one[i]-=tt; t-=tt; //cerr<<tt<<endl;
 	}
 	//cerr<<t<<" ";
 	if (thres){
@@ -243,10 +243,12 @@ double eval(const CardCombo & PAI){
 	else if (PAI.comboType == CardComboType::ROCKET) CHUVL += ROCKETVL();
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	fl=0; mxvl = -VLRNG;
-//	for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
+	// if(PAI.cards[0]!=43&&(PAI.cards[0]!=4||PAI.cards[1]!=6))return -100;
+	// for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
 	lian();
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
-	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<" "<<TRIPLETVL(12)<<endl;
+	//cerr<<PAIRVL(5)<<" aaaaaaaaaa "<<SINGLEVL(10)<<endl;
+	// cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
 	return mxvl+tradeoff*CHUVL;
 	
 }
