@@ -19,10 +19,10 @@ double tradeoff = 0.8;
 const VL VLRNG = 1000000000;
 VL mxvl;
 int pai[50]={0};
-int fl;
+int fl,qj;
 inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?0:-5;
+	myPosition!=landlordPosition)?0:-qj;
 }
 inline double f(double x){
 	if(x<=8)return x/4;
@@ -43,7 +43,7 @@ inline VL STRAIGHT2VL(double l,double len){
 	return l/4;
 }
 inline VL TRIPLETVL(double x){
-	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?5:0);
+	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);
 }
 inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
@@ -52,7 +52,7 @@ inline VL TRIPLET2VL(double x){
 	return TRIPLETVL(x);
 }
 inline VL BOMBVL(double x){
-	return max(PAIRVL(x)+PAIRVL(x),4+x/4)-(fl*5);
+	return max(PAIRVL(x)+PAIRVL(x),3+x/4)-(fl*qj);
 }
 inline VL QUADRUPLE2VL(double x){
 	return 1;
@@ -79,7 +79,7 @@ inline VL SSHUTTLE4VL(double x){
 	return 6;
 }
 inline VL ROCKETVL(){
-	return 9-(fl*5);
+	return 9-(fl*qj);
 }
 inline VL INVALIDVL(){
 	return -100;
@@ -220,6 +220,7 @@ double eval(const CardCombo & PAI){
 	for (auto x :myCards) ++pai[card2level(x)];
 	for (auto x :PAI.cards) --pai[card2level(x)];
 	vector<Card> cwy; FOR(i,0,14)FOR(j,0,pai[i]-1)cwy.pb(i*4+j);
+	qj=5; if((lastValidComboPosition+1)%3==myPosition)qj=3;
 	if((CardCombo(cwy)).comboType!=CardComboType::INVALID)tradeoff=1.2;
 	else tradeoff=0.8;
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
