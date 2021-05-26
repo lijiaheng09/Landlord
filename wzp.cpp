@@ -112,32 +112,38 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 					ans[i].insert(v[dq++]);
 			}
 		}
-		res.pb(mp(ans,1));
+		res.pb(mp(ans,-INFINITY));
 	}
 	sort(res.begin(),res.end());
 	res.resize(unique(res.begin(),res.end()) - res.begin());
 	int cnt = 0;
 	for(auto &i:res){
-		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC)
+#ifndef _DEBUG
+		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC) {
+#ifdef _LOG
+			cerr << "TERM DIST" << ' ' << cnt << endl;
+#endif
 			break;
+		}
+#endif
 		dist = i.first;
-		ld t=1;
+		ld t=0;
 		int dq=myPosition;
 		vector<CardCombo> zs;
 		while(cardRemaining[landlordPosition]<20){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
 			sigma=max(1,(int)whatTheyPlayed[myPosition].size());
-			t*=exp(
-			-sqr(getCandidatesEval(1)[0].fi-eval(zs.back()))/
-			(2*sigma*sigma))
-			/sqrt(2*M_PI)/sigma;
+			t+=eval(zs.back());
 		}
 		for(;zs.size();zs.pop_back())doCombo(zs.back()); 
 		i.se=t;
 	}
 	sort(res.begin(),res.end(),cmp);
 	if(res.size()>num)res.resize(num);
+	ld mint = INFINITY;
+	for (auto &&i : res) mint = min(mint, i.second);
+	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG

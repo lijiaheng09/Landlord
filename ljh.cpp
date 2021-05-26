@@ -195,16 +195,34 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
+/*
+double evalProb(const CardCombo &c0) {
+	double s = 0.0, r = 0.0;
+	for (auto &&c : getCandidates()) {
+		double v = exp(eval(c));
+		if (c.packs == c0.packs)
+			r = v;
+		s += v;
+	}
+	return r / s;
+}
+*/
+
 vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
 	max_sc = 1;
 	vector<pair<double, CardCombo>> candidates;
+	double s = 0.0;
 	for (auto &&c : getCandidates()) {
-		candidates.push_back({eval(c), c});
+		double v = exp(eval(c));
+		candidates.push_back({v, c});
+		s += v;
 		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
 			max_sc <<= 1;
 	}
+	for (auto &c : candidates)
+		c.first /= s;
 	sort(candidates.begin(), candidates.end(), gt_first);
-	if (candidates.size() > num)
+	if (num != -1 && candidates.size() > num)
 		candidates.resize(num);
 	return candidates;
 }

@@ -202,6 +202,7 @@ void lian(){
 	shun1(0);
 }
 
+/*
 double evalCards(const CardSet & PAI){
 	FOR(i,0,14) pai[i]=0;
 	for (auto x : PAI){
@@ -213,6 +214,7 @@ double evalCards(const CardSet & PAI){
 
 
 }
+*/
 
 double eval(const CardCombo & PAI){
 	FOR(i,0,14) pai[i]=0;
@@ -247,6 +249,8 @@ double eval(const CardCombo & PAI){
 	lian();
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<" "<<TRIPLETVL(12)<<endl;
-	return mxvl+tradeoff*CHUVL;
+
+	static const double mu = 0.3; // 估价每大 1, 出牌概率大 e^mu
+	return (mxvl+tradeoff*CHUVL) * mu;
 	
 }
