@@ -246,6 +246,7 @@ void undoCombo() {
 		if (d.comboType != CardComboType::PASS) {
 			lastValidCombo = d;
 			lastValidComboPosition = pos;
+			break;
 		}
 	}
 }
