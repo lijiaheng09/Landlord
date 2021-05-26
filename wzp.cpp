@@ -112,14 +112,16 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 					ans[i].insert(v[dq++]);
 			}
 		}
-		res.pb(mp(ans,1));
+		res.pb(mp(ans,0));
 	}
 	sort(res.begin(),res.end());
 	res.resize(unique(res.begin(),res.end()) - res.begin());
 	int cnt = 0;
 	for(auto &i:res){
+#ifndef _DEBUG
 		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC)
 			break;
+#endif
 		dist = i.first;
 		ld t=1;
 		int dq=myPosition;
