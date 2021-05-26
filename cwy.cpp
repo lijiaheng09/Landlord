@@ -253,6 +253,7 @@ double eval(const CardCombo & PAI){
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<PAIRVL(5)<<" aaaaaaaaaa "<<SINGLEVL(10)<<endl;
 	// cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
-	return mxvl+tradeoff*CHUVL;
+	static const double mu = 0.3; // 估价每大 1, 出牌概率大 e^mu
+	return (mxvl+tradeoff*CHUVL) * mu;
 	
 }

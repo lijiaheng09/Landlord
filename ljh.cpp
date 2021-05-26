@@ -302,7 +302,7 @@ int search() {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 8, THRESHOLD_OTHERS = 3;
+	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
 
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
 #ifdef _LOG
@@ -326,6 +326,7 @@ CardCombo getAction() {
 #ifdef _LOG
 	cerr << "Dist Prob:" << endl;
 	for (auto &&d : dists) {
+		// for(auto i:d.first[0])cerr<<card2level(i)<<" "; puts(""); 
 		cerr << d.second << endl;
 	}
 	cerr << "Candidates:" << endl;
