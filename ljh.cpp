@@ -268,119 +268,147 @@ void undoCombo() {
 	}
 }
 
-int procSearch(const CardCombo &c) {
-	int ans;
+struct Node {
+	int sc, max_sc;
+	double v;
+	CardCombo c;
+	Node *fa;
 
-	if (myCards.size() == c.cards.size())
-		ans = 1;
-	else {
-		bool is_landlord = myPosition == landlordPosition;
+	Node() : sc(-INF), v(0.0), c(), fa(0) { }
+	Node(double a_v, const CardCombo &a_c, Node *a_fa) : sc(-INF), v(a_v), c(a_c), fa(a_fa) { }
+} *root;
 
-		doCombo(c);
-		ans = search();
-		if (is_landlord || (myPosition == landlordPosition))
-			ans = -ans;
-		undoCombo();
+struct CmpNode {
+	bool operator () (const Node *a, const Node *b) const {
+		return a->v < b->v;
 	}
-	
-	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
-		ans *= 2;
+};
 
-	return ans;
+vector<Node *> candidateNodes;
+map<CardCombo, double> resEval;
+map<CardCombo, double> rawEval;
+priority_queue<Node *, vector<Node *>, CmpNode> Q;
+
+template <int Init = 0>
+void extendDown(Node *p) {
+	int prevPosition = (myPosition + PLAYER_COUNT - 1) % PLAYER_COUNT;
+	if (dist[prevPosition].empty()) {
+		bool is_enemy = myPosition == landlordPosition || prevPosition % PLAYER_COUNT == landlordPosition;
+		p->max_sc = p->sc = is_enemy ? -1 : 1;
+	} else {
+		bool is_enemy = myPosition == landlordPosition || (myPosition + 1) % PLAYER_COUNT == landlordPosition;
+		auto candidates = getCandidatesEval(-1, p->max_sc);
+		bool def = 1;
+		for (auto &&c : candidates) {
+			Node *t = new Node(p->v + log(c.first), c.second, p);
+			if (Init) {
+				candidateNodes.push_back(t);
+				rawEval[c.second] = c.first;
+			}
+			if (Init || def) {
+				int mul_sc = c.second.comboType == CardComboType::BOMB || c.second.comboType == CardComboType::ROCKET ? 2 : 1;
+				doCombo(c.second);
+				extendDown(t);
+				undoCombo();
+				p->sc = max(p->sc, mul_sc * (is_enemy ? -t->sc : t->sc));
+				def = 0;
+			}
+			else
+				Q.push(t);
+		}
+	}
 }
 
-bool term_flag = 0;
-
-int search() {
-	static int cnt = 0;
-	int num = 4;
-	if (myCards.size() > 3)
-		num = 2;
-	if (myCards.size() > 6)
-		num = 1;
-	int max_sc;
-	auto candidates = getCandidatesEval(num, max_sc);
-	int ans = -INF;
-	for (auto &&cs : candidates) {
-		ans = max(ans, procSearch(cs.second));
-#ifndef _DEBUG
-		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.95 * CLOCKS_PER_SEC)) {
-#ifdef _LOG
-			if (!term_flag)
-				cerr << "TERM" << endl;
-#endif
-			term_flag = 1;
-			return ans;
-		}
-#endif
-		if (ans == max_sc)
-			break;
+void doNode(Node *t) {
+	Node *p = t->fa;
+	if (p) {
+		const CardCombo &c = t->c;
+		doNode(p);
+		doCombo(c);
 	}
-	return ans;
+}
+
+void upward(Node *t) {
+	Node *p = t->fa;
+	if (p) {
+		const CardCombo &c = t->c;
+		int mul_sc = c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET ? 2 : 1;
+		undoCombo();
+		bool is_enemy = myPosition == landlordPosition || (myPosition + 1) % PLAYER_COUNT == landlordPosition;
+		p->sc = max(p->sc, mul_sc * (is_enemy ? -t->sc : t->sc));
+		upward(p);
+	}
+}
+
+void extend(Node *p) {
+	doNode(p);
+	extendDown(p);
+	upward(p);
+}
+
+void update(double TL) {
+	int cnt = 0;
+	while (!Q.empty()) {
+		if ((++cnt & 128) == 0 && clock() > TL * CLOCKS_PER_SEC)
+			break;
+		Node *p = Q.top();
+		Q.pop();
+		extend(p);
+	}
+}
+
+int search(double TL) {
+	while (!Q.empty())
+		Q.pop();
+	candidateNodes.clear();
+	root = new Node();
+	extendDown<1>(root);
+	update(TL);
+	return root->sc;
+}
+
+void searchCandidates(double w, double TL) {
+	search(TL);
+	for (Node *p : candidateNodes)
+		resEval[p->c] += w * p->sc;
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
+	static const int DIST_NUM = 20;
 
-	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
-#ifdef _LOG
-		cerr << "Candidates:" << endl;
-		auto candidates = getCandidatesEval(100);
-		for (auto &c : candidates) {
-			cerr << c.first << endl;
-			for (Card v : c.second.cards)
-				cerr << v << ' ';
-			cerr << endl;
-			cerr << "----------" << endl;
-		}
-#endif
-		return getCandidatesEval(1)[0].second;
-	}
 	auto dists = randCards(DIST_NUM);
+	double startTime = (double)clock() / CLOCKS_PER_SEC;
 #ifdef _LOG
-	cerr << "Rand Time: " << (double)clock() / CLOCKS_PER_SEC << endl;
+	cerr << "Rand Time: " << startTime << endl;
 #endif
-	auto candidates = getCandidatesEval(CAND_NUM);
-#ifdef _LOG
-	cerr << "Dist Prob:" << endl;
-	for (auto &&d : dists) {
-		cerr << d.second << endl;
-	}
-	cerr << "Candidates:" << endl;
-#endif
-	for (auto &c : candidates) {
-#ifdef _LOG
-		cerr << c.first << endl;
-		for (Card v : c.second.cards)
-			cerr << v << ' ';
-		cerr << endl;
-		cerr << "----------" << endl;
-#endif
-		c.first *= 0.0002*cardRemaining[myPosition];
-	}
-	for (auto &&d : dists) {
-		dist = d.first;
-		myCards = dist[myPosition];
-		for (auto &c : candidates) {
-			int r = procSearch(c.second);
-#ifdef _LOG
-			// cerr << r << endl;
-#endif
-			c.first += d.second * r;
-			if (term_flag)
-				break;
-		}
-		if (term_flag)
+	resEval.clear();
+	rawEval.clear();
+	int num = dists.size();
+	double vTime = (0.9 - startTime) / num;
+	for (int i = 0; i < num; i++) {
+		dist = dists[i].first;
+		searchCandidates(dists[i].second, startTime + vTime * (i + 1));
+		if (clock() > 0.9 * CLOCKS_PER_SEC)
 			break;
 	}
+	double val = -INFINITY;
+	CardCombo res;
+	for (auto &&p : resEval) {
+		p.second += 0.02 * cardRemaining[myPosition] * log(rawEval[p.first]);
 #ifdef _LOG
-	cerr << "Candidates Res:" << endl;
-	for (auto &c : candidates)
-		cerr << c.first << endl;
+		for (Card k : p.first.cards)
+			cerr << k << ' ';
+		cerr << ": " << rawEval[p.first] << ' ' << log(rawEval[p.first]) << ' ' << p.second << endl;
 #endif
-	return max_element(candidates.begin(), candidates.end(), le_first)->second;
+		if (p.second > val) {
+			res = p.first;
+			val = p.second;
+		}
+	}
+	return res;
 }
 
+/*
 double getMean() {
 	static const int DIST_NUM = 20;
 	auto dists = randCards(DIST_NUM);
@@ -392,3 +420,4 @@ double getMean() {
 	}
 	return ans;
 }
+*/

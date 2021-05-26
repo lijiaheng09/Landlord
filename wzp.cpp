@@ -25,7 +25,8 @@ int getBidValue(int maxBid){
 	For(i,0,53)if(to[i])v.pb(i);
 	ld jb=clock();
 	ld zs[2] = {0.0L, 0.0L};
-	while((clock()-jb)/CLOCKS_PER_SEC<0.9){
+	double TL = 0;
+	while(TL<0.9){
 		random_shuffle(v.begin(),v.end());
 		landlordPublicCards.clear();
 
@@ -56,7 +57,7 @@ int getBidValue(int maxBid){
 
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
-			double t=search();
+			double t=search(TL += 0.05);
 			if(isLandlord==1) t=t>0?t*1.2:t*0.5;
 			else t=t<0?t*0.5:t*1.2;
 			zs[isLandlord] += t;

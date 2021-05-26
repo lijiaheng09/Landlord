@@ -111,6 +111,10 @@ struct CardCombo
 	CardComboType comboType; // 算出的牌型
 	Level comboLevel = 0;	 // 算出的大小序
 
+	bool operator <(const CardCombo &b) const {
+		return packs < b.packs;
+	}
+
 	/**
 	* 检查个数最多的CardPack递减了几个
 	*/
