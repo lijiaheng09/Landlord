@@ -301,7 +301,7 @@ void extendDown(Node *p) {
 		auto candidates = getCandidatesEval(-1, p->max_sc);
 		bool def = 1;
 		for (auto &&c : candidates) {
-			Node *t = new Node(p->v + log(c.first), c.second, p);
+			Node *t = new Node(p->v + log(c.first) + 0.2, c.second, p);
 			if (Init) {
 				candidateNodes.push_back(t);
 				rawEval[c.second] = c.first;
@@ -375,10 +375,13 @@ void searchCandidates(double w, double TL) {
 		const CardCombo &c = t->c;
 		int mul_sc = c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET ? 2 : 1;
 		double sc = mul_sc * (is_enemy ? -t->sc : t->sc);
-		if (sc >= 0)
+		/*if (sc >= 0)
 			sc = pow(sc, 0.8);
 		else
-			sc = -pow(-sc, 1.2);
+			sc = -pow(-sc, 1.2);*/
+		// cerr << w << ' ' << sc << endl;
+		if (!resEval.count(c))
+			resEval[c] = 0.0;
 		resEval[c] += w * sc;
 	}
 }
