@@ -203,7 +203,7 @@ void lian(){
 }
 
 double evalCards(const CardSet & PAI){
-	FOR(i,0,14) pai[i]=0;
+	FOR(i,0,14) pai[i]=0; fl=0;
 	for (auto x : PAI){
 		++pai[card2level(x)];
 	}
