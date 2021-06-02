@@ -297,7 +297,7 @@ void lian(){
 
 	shun1(0);
 }
-/*
+
 double evalCards(const CardSet & PAI){
 	FOR(i,0,14) pai[i]=0; fl=0;
 	for (auto x : PAI){
@@ -309,7 +309,7 @@ double evalCards(const CardSet & PAI){
 
 
 }
-*/
+
 double eval(const CardCombo & PAI){
 
 
