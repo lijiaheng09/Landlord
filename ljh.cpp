@@ -297,8 +297,9 @@ void extendDown(Node *p) {
 		bool is_enemy = myPosition == landlordPosition || prevPosition % PLAYER_COUNT == landlordPosition;
 		p->max_sc = p->sc = is_enemy ? -1 : 1;
 	} else {
+		static const int MAX_CAND_NUM = 10;
 		bool is_enemy = myPosition == landlordPosition || (myPosition + 1) % PLAYER_COUNT == landlordPosition;
-		auto candidates = getCandidatesEval(-1, p->max_sc);
+		auto candidates = getCandidatesEval(MAX_CAND_NUM, p->max_sc);
 		bool def = 1;
 		for (auto &&c : candidates) {
 			Node *t = new Node(p->v + log(c.first), c.second, p);
@@ -389,7 +390,22 @@ void searchCandidates(double w, double TL) {
 }
 
 CardCombo getAction() {
-	static const int DIST_NUM = 20;
+	static const int DIST_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
+
+	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
+#ifdef _LOG
+		cerr << "Candidates:" << endl;
+		auto candidates = getCandidatesEval(100);
+		for (auto &c : candidates) {
+			cerr << c.first << endl;
+			for (Card v : c.second.cards)
+				cerr << v << ' ';
+			cerr << endl;
+			cerr << "----------" << endl;
+		}
+#endif
+		return getCandidatesEval(1)[0].second;
+	}
 
 	auto dists = randCards(DIST_NUM);
 	double startTime = (double)clock() / CLOCKS_PER_SEC;
