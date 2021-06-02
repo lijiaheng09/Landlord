@@ -16,11 +16,7 @@ typedef double VL;
 
 
 double tradeoff = 0.8;
-<<<<<<< HEAD
 const VL INFV = 500;
-=======
-const VL inf = 500;
->>>>>>> 7e8b50f63f58f9fceb0b316e5f312c31fe003584
 const VL VLRNG = 1000000000;
 bool guo;
 int VE[6],ve[6];
@@ -128,11 +124,7 @@ void suan(VL vl){
 			FOR(i,5,12) ci-=ves[i];
 			FOR(i,3,12) ci-=vel[i];
 			if (ci<=niu+1){
-<<<<<<< HEAD
 				mxvl=INFV;
-=======
-				mxvl=inf;
->>>>>>> 7e8b50f63f58f9fceb0b316e5f312c31fe003584
 				return;
 			}
 		}
@@ -174,11 +166,7 @@ void suan(VL vl){
 			FOR(i,1,4) ve[i]=VE[i];
 
 			if (ci>=-1){
-<<<<<<< HEAD
 				mxvl=INFV;
-=======
-				mxvl=inf;
->>>>>>> 7e8b50f63f58f9fceb0b316e5f312c31fe003584
 				return;
 			}
 
