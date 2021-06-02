@@ -25,7 +25,11 @@ int getBidValue(int maxBid){
 	For(i,0,53)if(to[i])v.pb(i);
 	ld jb=clock();
 	ld zs[2] = {0.0L, 0.0L};
+	int cnt=0;
 	while((clock()-jb)/CLOCKS_PER_SEC<0.9){
+		#ifdef _LOG 
+			cnt++;
+		#endif
 		random_shuffle(v.begin(),v.end());
 		landlordPublicCards.clear();
 
@@ -49,6 +53,9 @@ int getBidValue(int maxBid){
 		for (int isLandlord : {0, 1}) {
 			int pc = 3;
 			landlordPosition = isLandlord ? myPosition : (myPosition + 1) % PLAYER_COUNT;
+			if(!isLandlord&&evalCards(dist[landlordPosition])<
+				evalCards(dist[(landlordPosition+1)%3]))
+				swap(dist[landlordPosition],dist[(landlordPosition+1)%3]);
 			for (Card c : landlordPublicCards)
 				dist[landlordPosition].insert(c);
 			landlordBid = 3;
@@ -57,8 +64,11 @@ int getBidValue(int maxBid){
 			myPosition = landlordPosition;
 			myCards = dist[myPosition];
 			double t=search();
-			if(isLandlord==1) t=t>0?t*1.2:t*0.5;
-			else t=t<0?t*0.5:t*1.2;
+			
+			//cerr<<(isLandlord?t:-t)<<" "; if(isLandlord==1)cerr<<endl;
+			if(t>1)t=1; else if(t<-1)t=-1;
+			if(isLandlord==1) t=t>0?t*1:t;
+			else t=t<0?t*0.7:t;
 			zs[isLandlord] += t;
 			//cerr<<zs[0]<<" "<<zs[1]<<endl;
 			//cerr<<dist[1].size()<<endl; exit(0);
@@ -70,8 +80,11 @@ int getBidValue(int maxBid){
 			myCards = dist[myPosition];
 		}
 	}
-	cerr<<-zs[0]<<" "<<zs[1]<<endl;
-	return 2.0L * zs[1] > -zs[0] ? 3 : 0;
+	#ifdef _LOG
+		cerr<<cnt<<endl;
+	#endif
+	cerr<<"farmer:"<<-zs[0]<<" landlord:"<<2*zs[1]<<endl;
+	return 2.0L * zs[1] > -zs[0]&&zs[1]>0 ? 3 : 0;
 }
 
 ld sigma=3.0;
@@ -145,7 +158,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	for (auto &&i : res) mint = min(mint, i.second);
 	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
-	for(auto &i:res)i.se=min(i.se/sum,0.2);
+	for(auto &i:res)i.se=min(i.se/sum,0.1);
 	sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG
