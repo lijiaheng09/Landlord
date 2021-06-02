@@ -313,8 +313,12 @@ CardCombo getAction() {
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
-			for (auto &c : candidates)
-				c.first += d.second * eval(c.second);
+			for (auto &c : candidates) {
+				double v = eval(c.second);
+				if (v > 10.0)
+					v = 10.0 + d.second * (v - 10.0);
+				c.first += d.second * v;
+			}
 		}
 #ifdef _LOG
 		cerr << "Candidates:" << endl;
@@ -332,6 +336,8 @@ CardCombo getAction() {
 #ifdef _LOG
 	cerr << "Rand Time: " << (double)clock() / CLOCKS_PER_SEC << endl;
 #endif
+	dist = dists[0].first;
+	myCards = dist[myPosition];
 	auto candidates = getCandidatesEval(CAND_NUM);
 #ifdef _LOG
 	cerr << "Dist Prob:" << endl;
@@ -349,7 +355,7 @@ CardCombo getAction() {
 		cerr << endl;
 		cerr << "----------" << endl;
 #endif
-		c.first *= 0.0002*cardRemaining[myPosition];
+		c.first *= 0.0005*cardRemaining[myPosition];
 		
 	}
 	for (auto &&d : dists) {
