@@ -306,9 +306,18 @@ CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
 
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
+		vector<pair<double, CardCombo>> candidates;
+		for (auto &&c : getCandidates())
+			candidates.push_back({0, c});
+		auto dists = randCards(DIST_NUM);
+		for (auto &&d : dists) {
+			dist = d.first;
+			myCards = dist[myPosition];
+			for (auto &c : candidates)
+				c.first += d.second * eval(c.second);
+		}
 #ifdef _LOG
 		cerr << "Candidates:" << endl;
-		auto candidates = getCandidatesEval(100);
 		for (auto &c : candidates) {
 			cerr << c.first << endl;
 			for (Card v : c.second.cards)
@@ -317,7 +326,7 @@ CardCombo getAction() {
 			cerr << "----------" << endl;
 		}
 #endif
-		return getCandidatesEval(1)[0].second;
+		return max_element(candidates.begin(), candidates.end(), le_first)->second;
 	}
 	auto dists = randCards(DIST_NUM);
 #ifdef _LOG
