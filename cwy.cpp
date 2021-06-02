@@ -141,7 +141,7 @@ void suan(VL vl){
 
 			FOR(i,0,14) if (pai[i]){
 				if (pai[i]<=3)
-					ve[pai[i]]+=fh(i-da[pai[i]]);
+					ve[pai[i]]+=fh(i-DA[pai[i]]);
 				
 			}
 			if (pai[13] && pai[14]){
@@ -159,9 +159,9 @@ void suan(VL vl){
 				san-=t;
 				ve[1]+=t;
 			}
-			int ci=ve[1]+ve[2]+ve[3]+wozha;
-			FOR(i,5,12) ci+=ves[i];
-			FOR(i,3,12) ci+=vel[i];
+			int ci=min(0,ve[1])+min(ve[2],0)+min(0,ve[3])+wozha;
+			FOR(i,5,12) ci+=min(0,ves[i]);
+			FOR(i,3,12) ci+=min(0,vel[i]);
 
 			FOR(i,1,4) ve[i]=VE[i];
 
@@ -312,7 +312,11 @@ double evalCards(const CardSet & PAI){
 
 double eval(const CardCombo & PAI){
 
-
+	if (PAI.comboType == CardComboType::PAIR){
+		if (PAI.packs[0].level==10){
+			int tt=1;
+		}
+	}
 
 	zha=-1;
 	DA[1]=DA[2]=DA[3]=-1;
