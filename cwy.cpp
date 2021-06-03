@@ -68,7 +68,7 @@ inline VL TRIPLET1VL(double x){
 	return TRIPLETVL(x);
 }
 inline VL TRIPLET2VL(double x){
-	return TRIPLETVL(x);
+	return TRIPLETVL(x)+(fl*0.5);
 }
 inline VL BOMBVL(double x){
 	return max(PAIRVL(x)+PAIRVL(x),3+x/4)-(fl*qj);
