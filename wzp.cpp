@@ -153,12 +153,21 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num, double TL){
 		i.se=t;
 	}
 	sort(res.begin(),res.end(),cmp);
-	if(res.size()>num)res.resize(num);
+	num=min(num,(int)res.size());
+	vector<pair<CardDistrib,double> >jb;
+	For(i,num/2,num-1){
+		swap(res[i],res[i+rand()%(res.size()-i)]);
+		jb.pb(res[i]);
+		//cerr<<res[i].fi[0].count(32)+res[i].fi[0].count(33)+res[i].fi[0].count(34)+res[i].fi[0].count(35)<<endl;
+	}
+	res.resize(num/2);
+	//cerr<<"bound: "<<res[num-1].se<<endl;
 	ld mint = INFINITY;
 	for (auto &&i : res) mint = min(mint, i.second);
 	for (auto &i : res) i.second = exp(i.second - mint);
 	ld sum=0; for(auto &i:res)sum+=i.se;
-	for(auto &i:res)i.se=min(i.se/sum,0.1);
+	for(auto &i:res)i.se=max(min(i.se/sum,0.1),0.4/num);
+	for(auto &i:jb)res.pb(mp(i.fi,0.4/num));
 	sum=0; for(auto &i:res)sum+=i.se;
 	for(auto &i:res)i.se/=sum;
 #ifdef _LOG
