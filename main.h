@@ -12,6 +12,7 @@ int search(); // 最优得分
 std::vector<CardCombo> getCandidates();
 std::vector<std::pair<CardDistrib, double>> randCards(int num, double TL);
 std::vector<std::pair<double, CardCombo>> getCandidatesEval(int num);
+double getCandidateProb(const CardCombo &);
 double evalCards(const CardSet &); // 期望得分
 double eval(const CardCombo &); // 期望得分
 

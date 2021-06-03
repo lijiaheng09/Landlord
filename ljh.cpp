@@ -219,6 +219,14 @@ vector<pair<double, CardCombo>> getCandidatesEval(int num) {
 	return getCandidatesEval(num, dum);
 }
 
+double getCandidateProb(const CardCombo &c) {
+	auto candidates = getCandidatesEval(-1);
+	for (auto &&p : candidates)
+		if (p.second == c)
+			return p.first;
+	return 0.0;
+}
+
 void doCombo(const CardCombo &c) {
 	whatTheyPlayed[myPosition].push_back(c);
 	if (c.comboType != CardComboType::PASS) {
@@ -361,7 +369,7 @@ CardCombo getAction() {
 		cerr << endl;
 		cerr << "----------" << endl;
 #endif
-		c.first *= 0.0005*cardRemaining[myPosition];
+		c.first *= 0.03*cardRemaining[myPosition];
 		
 	}
 	for (auto &&d : dists) {

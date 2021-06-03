@@ -100,6 +100,10 @@ struct CardCombo
 				return level > b.level;
 			return count > b.count;
 		}
+
+		bool operator ==(const CardPack &b) const {
+			return count == b.count && level == b.level;
+		}
 	};
 	std::vector<Card> cards;		 // 原始的牌，未排序
 	std::vector<CardPack> packs;	 // 按数目和大小排序的牌种
@@ -108,6 +112,10 @@ struct CardCombo
 
 	bool operator <(const CardCombo &b) const { 
 		return packs < b.packs;
+	}
+
+	bool operator ==(const CardCombo &b) const {
+		return packs == b.packs;
 	}
 
 	/**

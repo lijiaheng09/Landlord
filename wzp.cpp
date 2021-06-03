@@ -147,7 +147,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num, double TL){
 			zs.pb(whatTheyPlayed[(myPosition+2)%3].back());
 			undoCombo();
 			sigma=max(1,(int)whatTheyPlayed[myPosition].size());
-			t+=eval(zs.back());
+			t+=log(getCandidateProb(zs.back()));// eval(zs.back());
 		}
 		for(;zs.size();zs.pop_back())doCombo(zs.back()); 
 		i.se=t;
