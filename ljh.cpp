@@ -198,13 +198,18 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
 	max_sc = 1;
 	vector<pair<double, CardCombo>> candidates;
+	double s = 0.0;
 	for (auto &&c : getCandidates()) {
-		candidates.push_back({eval(c), c});
+		double v = exp(eval(c));
+		candidates.push_back({v, c});
+		s += v;
 		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
 			max_sc <<= 1;
 	}
+	for (auto &c : candidates)
+		c.first /= s;
 	sort(candidates.begin(), candidates.end(), gt_first);
-	if (candidates.size() > num)
+	if (num != -1 && candidates.size() > num)
 		candidates.resize(num);
 	return candidates;
 }
@@ -287,7 +292,7 @@ int search() {
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 #ifndef _DEBUG
-		if (term_flag || (((++cnt) & 1024) == 0 && clock() > 0.95 * CLOCKS_PER_SEC)) {
+		if (term_flag || (((++cnt) & 1023) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
 #ifdef _LOG
 			if (!term_flag)
 				cerr << "TERM" << endl;
@@ -306,33 +311,34 @@ CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 10, THRESHOLD_OTHERS = 5;
 
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
-		vector<pair<double, CardCombo>> candidates;
-		for (auto &&c : getCandidates())
-			candidates.push_back({0, c});
-		auto dists = randCards(DIST_NUM);
+		map<CardCombo, double> candidates;
+		auto dists = randCards(DIST_NUM, 0.5);
 		for (auto &&d : dists) {
 			dist = d.first;
 			myCards = dist[myPosition];
-			for (auto &c : candidates) {
-				double v = eval(c.second);
-				if (v > 10.0)
-					v = 10.0 + d.second * (v - 10.0);
-				c.first += d.second * v;
-			}
+			for (auto &&c : getCandidatesEval(-1))
+				candidates[c.second] += d.second * c.first;
 		}
+		CardCombo ans;
+		double v = -INFINITY;
+		for (auto &&c : candidates)
+			if (c.second > v) {
+				v = c.second;
+				ans = c.first;
+			}
 #ifdef _LOG
 		cerr << "Candidates:" << endl;
-		for (auto &c : candidates) {
-			cerr << c.first << endl;
-			for (Card v : c.second.cards)
+		for (auto &&c : candidates) {
+			cerr << c.second << endl;
+			for (Card v : c.first.cards)
 				cerr << v << ' ';
 			cerr << endl;
 			cerr << "----------" << endl;
 		}
 #endif
-		return max_element(candidates.begin(), candidates.end(), le_first)->second;
+		return ans;
 	}
-	auto dists = randCards(DIST_NUM);
+	auto dists = randCards(DIST_NUM, 0.1);
 #ifdef _LOG
 	cerr << "Rand Time: " << (double)clock() / CLOCKS_PER_SEC << endl;
 #endif
@@ -381,9 +387,10 @@ CardCombo getAction() {
 	return max_element(candidates.begin(), candidates.end(), le_first)->second;
 }
 
+/*
 double getMean() {
 	static const int DIST_NUM = 20;
-	auto dists = randCards(DIST_NUM);
+	auto dists = randCards(DIST_NUM, 0.1);
 	double ans = 0;
 	for (auto &&d : dists) {
 		dist = d.first;
@@ -392,3 +399,4 @@ double getMean() {
 	}
 	return ans;
 }
+*/

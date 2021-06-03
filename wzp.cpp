@@ -93,7 +93,7 @@ bool cmp(const pair<CardDistrib, double> &a,
 const pair<CardDistrib, double> &b){
 	return a.se>b.se;
 }
-std::vector<std::pair<CardDistrib, double>> randCards(int num){
+std::vector<std::pair<CardDistrib, double>> randCards(int num, double TL){
 	double ti=clock();
 	int to[54];
 	for(int i = 0; i < 54; i++)
@@ -132,7 +132,7 @@ std::vector<std::pair<CardDistrib, double>> randCards(int num){
 	int cnt = 0;
 	for(auto &i:res){
 #ifndef _DEBUG
-		if ((++cnt & 128) == 0 && clock() > 0.1 * CLOCKS_PER_SEC) {
+		if ((++cnt & 127) == 0 && clock() > TL * CLOCKS_PER_SEC) {
 #ifdef _LOG
 			cerr << "TERM DIST" << ' ' << cnt << endl;
 #endif
