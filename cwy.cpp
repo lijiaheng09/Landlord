@@ -13,6 +13,7 @@ typedef vector<int> vec;
 typedef double VL;
 #include "card.h"
 #include "main.h"
+#include "magic.hpp"
 
 
 double tradeoff = 0.8;
@@ -32,7 +33,6 @@ int da[5];
 int tri,tri1,tri2;
 int pia[20];
 int pai[50]={0};
-int fl,qj;
 int fan;
 
 CardCombo PAII;
@@ -47,73 +47,6 @@ inline int fh(int x){
 	if (x>0) return 1;
 	else if (x<0) return -1;
 	else return 0;
-}
-inline VL PASSVL(){
-	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?
-	log(max(1,-cardRemaining[lastValidComboPosition]-
-	cardRemaining[landlordPosition]+10)):
-	-qj;
-}
-inline double f(double x){
-	if(x<=8)return x/4;
-	if(x<=11)return 2+(x-8)/2;
-	return x-12+5;
-}
-inline VL SINGLEVL(double x){
-	return f(x)-2;
-}
-inline VL PAIRVL(double x){
-	if (x<13) return max(SINGLEVL(x)*2,f(x)*1.2-1.5);
-	else assert(0);
-}
-inline VL STRAIGHTVL(double l, double len){
-	return (l+len/2)/4-(1-fl)*(len-5)/2;
-}
-inline VL STRAIGHT2VL(double l,double len){
-	return l/4-(1-fl)*(len-3);
-}
-inline VL TRIPLETVL(double x){
-	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);
-}
-inline VL TRIPLET1VL(double x){
-	return TRIPLETVL(x);
-}
-inline VL TRIPLET2VL(double x){
-	return TRIPLETVL(x)+(fl*0.5);
-}
-inline VL BOMBVL(double x){
-	return max(PAIRVL(x)+PAIRVL(x),3+x/4)-(fl*qj);
-}
-inline VL QUADRUPLE2VL(double x){
-	return 1;
-}
-inline VL QUADRUPLE4VL(double x){
-	return 1;
-}
-inline VL PLANEVL(double x){
-	return (x/6+4);
-}
-inline VL PLANE1VL(double x){
-	return 5;
-}
-inline VL PLANE2VL(double x){
-	return 6;
-}
-inline VL SSHUTTLEVL(double x){
-	return (x/6+5);
-}
-inline VL SSHUTTLE2VL(double x){
-	return 6;
-}
-inline VL SSHUTTLE4VL(double x){
-	return 6;
-}
-inline VL ROCKETVL(){
-	return 9-(fl*qj);
-}
-inline VL INVALIDVL(){
-	return -100;
 }
 
 int zs;

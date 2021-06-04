@@ -30,7 +30,7 @@ ljh.o: ljh.cpp card.h card.hpp main.h
 wzp.o: wzp.cpp card.h card.hpp main.h
 	g++ -c wzp.cpp $(CXXFLAGS)
 
-cwy.o: cwy.cpp card.h card.hpp main.h
+cwy.o: cwy.cpp card.h card.hpp main.h magic.hpp
 	g++ -c cwy.cpp $(CXXFLAGS)
 
 clean:
