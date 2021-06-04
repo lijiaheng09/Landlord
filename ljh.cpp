@@ -195,12 +195,12 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
+vector<pair<double, CardCombo>> getCandidatesEvalSc(int num, int &max_sc, bool worstCase = 0) {
 	max_sc = 1;
 	vector<pair<double, CardCombo>> candidates;
 	double s = 0.0;
 	for (auto &&c : getCandidates()) {
-		double v = exp(eval(c));
+		double v = exp(eval(c, worstCase));
 		candidates.push_back({v, c});
 		s += v;
 		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
@@ -214,13 +214,13 @@ vector<pair<double, CardCombo>> getCandidatesEval(int num, int &max_sc) {
 	return candidates;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEval(int num) {
+vector<pair<double, CardCombo>> getCandidatesEval(int num, bool worstCase) {
 	int dum;
-	return getCandidatesEval(num, dum);
+	return getCandidatesEvalSc(num, dum, worstCase);
 }
 
 double getCandidateProb(const CardCombo &c) {
-	auto candidates = getCandidatesEval(-1);
+	auto candidates = getCandidatesEval(-1, 1); // worstCase
 	for (auto &&p : candidates)
 		if (p.second == c)
 			return p.first;
@@ -295,7 +295,7 @@ int search() {
 	if (myCards.size() > 6)
 		num = 1;
 	int max_sc;
-	auto candidates = getCandidatesEval(num, max_sc);
+	auto candidates = getCandidatesEvalSc(num, max_sc);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
@@ -319,32 +319,20 @@ CardCombo getAction() {
 	static const int DIST_NUM = 100, CAND_NUM = 10, THRESHOLD = 8, THRESHOLD_OTHERS = 2;
 
 	if (myCards.size() > THRESHOLD && *min_element(cardRemaining, cardRemaining + PLAYER_COUNT) > THRESHOLD_OTHERS) {
-		map<CardCombo, double> candidates;
-		auto dists = randCards(DIST_NUM, 0.5);
-		for (auto &&d : dists) {
-			dist = d.first;
-			myCards = dist[myPosition];
-			for (auto &&c : getCandidatesEval(-1))
-				candidates[c.second] += d.second * c.first;
-		}
-		CardCombo ans;
-		double v = -INFINITY;
-		for (auto &&c : candidates)
-			if (c.second > v) {
-				v = c.second;
-				ans = c.first;
-			}
+		dist = randCards(1, 0.5)[0].first;
+		myCards = dist[myPosition];
+		auto candidates = getCandidatesEval(-1, 1); // worstCase
 #ifdef _LOG
 		cerr << "Candidates:" << endl;
 		for (auto &&c : candidates) {
-			cerr << c.second << endl;
-			for (Card v : c.first.cards)
+			cerr << c.first << endl;
+			for (Card v : c.second.cards)
 				cerr << v << ' ';
 			cerr << endl;
 			cerr << "----------" << endl;
 		}
 #endif
-		return ans;
+		return candidates[0].second;
 	}
 	auto dists = randCards(DIST_NUM, 0.1);
 #ifdef _LOG
