@@ -33,10 +33,16 @@ int tri,tri1,tri2;
 int pia[20];
 int pai[50]={0};
 int fl,qj;
+int fan;
 
 CardCombo PAII;
 bool O;
 
+int count_zha(){
+	int t=(pai[13] && pai[14]);
+	FOR(i,0,12) if (pai[i]==4) ++t;
+	return t;
+}
 inline int fh(int x){
 	if (x>0) return 1;
 	else if (x<0) return -1;
@@ -110,26 +116,27 @@ inline VL INVALIDVL(){
 int zs;
 void suan(VL vl){
 
+	VL shangvl = 0;
 	for (int ald=int(guo);ald<=0;++ald){
 
 		if (zha!=-1){
 			static int s[5];
 			s[1]=s[2]=s[3]=s[4]=0;
 			int niu=0;
-			int fan=0;
+			int FAN=fan;
 			FOR(i,0,12) if (pai[i]){
 				if (pai[i]<=3) ++s[pai[i]];
-				else if (i>zha) ++niu,++fan;
-				else ++s[4],++fan;
+				else if (i>zha) ++niu,++FAN;
+				else ++s[4],++FAN;
 			}
-			if (pai[13] && pai[14]) ++niu; else s[1]+=pai[13]+pai[14],++fan;
+			if (pai[13] && pai[14]) ++niu; else s[1]+=pai[13]+pai[14],++FAN;
 			int ci=s[4]+s[3]+max(s[1]+s[2]-s[3],0);
 			FOR(i,5,12) ci-=ves[i];
 			FOR(i,3,12) ci-=vel[i];
 			FOR(i,1,4) ci-=ve[i];
 			if (ci<=niu+1){
-				mxvl=max(mxvl, INFV+fan*ZHAVL);
-				return;
+				shangvl = INFV+FAN*ZHAVL;
+				break;
 			}
 		}
 		else{
@@ -172,7 +179,7 @@ void suan(VL vl){
 				}
 			}
 
-			int fan=wozha;
+			int FAN=fan+wozha;
 
 			bool gg=0;
 			FOR(i,3,12) if (ndl[i]>0){
@@ -213,8 +220,8 @@ void suan(VL vl){
 
 
 			if (ci>=-1){
-				mxvl=max(mxvl, INFV+fan*ZHAVL);
-				return;
+				shangvl = INFV+FAN*ZHAVL;
+				break;
 			}
 
 		}
@@ -264,7 +271,7 @@ void suan(VL vl){
 		}
 	}
 	//cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
-	mxvl=max(mxvl,t-(cardcnt<myCards.size()?max(6-cardcnt,0):0));
+	mxvl=max(mxvl,shangvl+t-(cardcnt<myCards.size()?max(6-cardcnt,0):0));
 }
 void shun2(VL vl, bool o){
 	static int ts2;
@@ -367,7 +374,8 @@ double eval(const CardCombo & PAI, bool o){
 
 
 	if (SZ(PAI.cards)==SZ(dist[myPosition])){
-		return INFV;
+		int t=(PAI.comboType == CardComboType::BOMB || PAI.comboType == CardComboType::ROCKET);
+		return INFV+t*ZHAVL;
 	}
 
 
@@ -455,13 +463,23 @@ double eval(const CardCombo & PAI, bool o){
 	nd[3]=0;
 	nd[4]=0;
 	FOR(i,3,12) nds[i]=ndl[i]=0;
+	fan=0;
 
 	
 
 
 	FOR(i,0,14) pai[i]=0;
 	for (auto x :myCards) ++pai[card2level(x)];
+
+	int t1 = count_zha();
+
 	for (auto x :PAI.cards) --pai[card2level(x)];
+
+	int t2 = count_zha();
+
+	if (t1!=t2) guo=1;
+
+
 	vector<Card> cwy; FOR(i,0,14)FOR(j,0,pai[i]-1)cwy.pb(i*4+j);
 	qj=5; if((lastValidComboPosition+1)%3==myPosition)qj=3;
 	if((CardCombo(cwy)).comboType!=CardComboType::INVALID)tradeoff=1.2;
@@ -479,7 +497,7 @@ double eval(const CardCombo & PAI, bool o){
 	else if (PAI.comboType == CardComboType::TRIPLET) CHUVL += TRIPLETVL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
 	else if (PAI.comboType == CardComboType::TRIPLET1) CHUVL += TRIPLET1VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
 	else if (PAI.comboType == CardComboType::TRIPLET2) CHUVL += TRIPLET2VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
-	else if (PAI.comboType == CardComboType::BOMB) CHUVL += BOMBVL(PAI.packs[0].level),ve[4]-=(PAI.packs[0].level<zha),nd[4]+=(PAI.packs[0].level<zha);
+	else if (PAI.comboType == CardComboType::BOMB) ++fan, CHUVL += BOMBVL(PAI.packs[0].level),ve[4]-=(PAI.packs[0].level<zha),nd[4]+=(PAI.packs[0].level<zha);
 	else if (PAI.comboType == CardComboType::QUADRUPLE2) CHUVL += QUADRUPLE2VL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::QUADRUPLE4) CHUVL += QUADRUPLE4VL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::PLANE) CHUVL += PLANEVL(PAI.packs[0].level);
