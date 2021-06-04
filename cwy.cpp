@@ -310,13 +310,7 @@ double evalCards(const CardSet & PAI){
 
 }
 
-double eval(const CardCombo & PAI){
-
-	if (PAI.comboType == CardComboType::PAIR){
-		if (PAI.packs[0].level==10){
-			int tt=1;
-		}
-	}
+double eval(const CardCombo & PAI, bool o){
 
 	zha=-1;
 	DA[1]=DA[2]=DA[3]=-1;
@@ -325,6 +319,13 @@ double eval(const CardCombo & PAI){
 		FOR(j,0,14) pia[j]=0;
 		for (auto x:dist[id]){
 			++pia[card2level(x)];
+		}
+		if (o){
+			FOR(k,id+1,2) if (k!=myPosition){
+				for (auto x:dist[k]){
+					++pia[card2level(x)];
+				}
+			}
 		}
 		int da[5];
 		da[1]=da[2]=da[3]=da[4]=-1;
@@ -368,7 +369,7 @@ double eval(const CardCombo & PAI){
 			//shunzi
 		}
 
-
+		if (o) break;
 
 	}
 
