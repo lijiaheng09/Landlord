@@ -463,7 +463,8 @@ double eval(const CardCombo & PAI, bool o){
 	VL CHUVL(0); fl=1;
 	if(PAI.comboType==CardComboType::SINGLE&&card2level(PAI.cards[0])<=10)zs=1; else zs=0;
 	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
-	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0)),guo=1;
+	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:
+	(lastValidCombo.comboType==CardComboType::PAIR?-0.25:0))),guo=1;
 	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level),ve[1]-=(PAI.packs[0].level<DA[1]),nd[1]+=(PAI.packs[0].level<DA[1]);
 	else if (PAI.comboType == CardComboType::PAIR) CHUVL += PAIRVL(PAI.packs[0].level),ve[2]-=(PAI.packs[0].level<DA[2]),nd[2]+=(PAI.packs[0].level<DA[2]);
 	else if (PAI.comboType == CardComboType::STRAIGHT) CHUVL += STRAIGHTVL(PAI.packs.back().level, SZ(PAI.packs)),ves[SZ(PAI.packs)]-=(PAI.packs[0].level<DAS[SZ(PAI.packs)]),nds[SZ(PAI.packs)]+=(PAI.packs[0].level<DAS[SZ(PAI.packs)]);
