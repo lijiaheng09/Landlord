@@ -233,7 +233,7 @@ if (PAII.comboType == CardComboType::SINGLE){
 	int twos = 0;
 	int ones = 0;
 	int thres = 0,zz=0;
-	FOR(i,0,12)
+	FOR(i,0,14)
 		if (pai[i]){
 			if (pai[i]==1) {t+=(one[++ones]=SINGLEVL(i)); 
 			if(i>10)ones--;}
@@ -265,9 +265,6 @@ if (PAII.comboType == CardComboType::SINGLE){
 			else break;
 		}
 	}
-	if (pai[13] && pai[14]) t += ROCKETVL();
-	else if (pai[13]) t += SINGLEVL(13);
-	else if (pai[14]) t += SINGLEVL(14);
 	//cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
 	mxvl=max(mxvl,t-(cardcnt<myCards.size()?max(6-cardcnt,0):0));
 }
@@ -504,7 +501,7 @@ double eval(const CardCombo & PAI, bool o){
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	fl=0; mxvl = -VLRNG;
 	// if(PAI.cards[0]!=43&&(PAI.cards[0]!=4||PAI.cards[1]!=6))return -100;
-	//for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
+	// for(auto i:PAI.cards)cerr<<card2level(i)<<" "; cerr<<" alddddddd\n";
 	lian();
 
 
@@ -512,7 +509,7 @@ double eval(const CardCombo & PAI, bool o){
 
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<PAIRVL(5)<<" aaaaaaaaaa "<<SINGLEVL(10)<<endl;
-	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
+	// cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
 	static const double mu = 0.1; // 估价每大 1, 出牌概率大 e^mu
 	
 	return (mxvl+tradeoff*CHUVL) * mu;
