@@ -16,7 +16,8 @@ typedef double VL;
 
 
 double tradeoff = 0.8;
-const VL INFV = 500;
+const VL ZHAVL = 10;
+const VL INFV = 50;
 const VL VLRNG = 1000000000;
 int nds[15],ndl[15];
 int nd[6],ND[6];
@@ -115,18 +116,19 @@ void suan(VL vl){
 			static int s[5];
 			s[1]=s[2]=s[3]=s[4]=0;
 			int niu=0;
+			int fan=0;
 			FOR(i,0,12) if (pai[i]){
 				if (pai[i]<=3) ++s[pai[i]];
-				else if (i>zha) ++niu;
-				else ++s[4];
+				else if (i>zha) ++niu,++fan;
+				else ++s[4],++fan;
 			}
-			if (pai[13] && pai[14]) ++niu; else s[1]+=pai[13]+pai[14];
+			if (pai[13] && pai[14]) ++niu; else s[1]+=pai[13]+pai[14],++fan;
 			int ci=s[4]+s[3]+max(s[1]+s[2]-s[3],0);
 			FOR(i,5,12) ci-=ves[i];
 			FOR(i,3,12) ci-=vel[i];
 			FOR(i,1,4) ci-=ve[i];
 			if (ci<=niu+1){
-				mxvl=INFV;
+				mxvl=max(mxvl, INFV+fan*ZHAVL);
 				return;
 			}
 		}
@@ -147,17 +149,7 @@ void suan(VL vl){
 			FOR(i,3,12) VEL[i]=vel[i];
 
 
-			bool gg=0;
-			FOR(i,3,12) if (ndl[i]>0){
-				if (wozha) --wozha,++VEL[i];
-				else {gg=1;break;}
-			}
-			if (gg) break;
-			FOR(i,5,12) if (nds[i]>0){
-				if (wozha) --wozha,++VES[i];
-				else {gg=1;break;}
-			}
-			if (gg) break;
+
 
 			FOR(i,0,12) if (pai[i]){
 				if (pai[i]<=3){
@@ -179,6 +171,21 @@ void suan(VL vl){
 					ND[1]-=(fh(14-DA[1])==1);
 				}
 			}
+
+			int fan=wozha;
+
+			bool gg=0;
+			FOR(i,3,12) if (ndl[i]>0){
+				if (wozha) --wozha,++VEL[i];
+				else {gg=1;break;}
+			}
+			if (gg) break;
+			FOR(i,5,12) if (nds[i]>0){
+				if (wozha) --wozha,++VES[i];
+				else {gg=1;break;}
+			}
+			if (gg) break;
+
 
 			FOR(i,1,3)
 				if (ND[i]>0){
@@ -206,7 +213,7 @@ void suan(VL vl){
 
 
 			if (ci>=-1){
-				mxvl=INFV;
+				mxvl=max(mxvl, INFV+fan*ZHAVL);
 				return;
 			}
 
