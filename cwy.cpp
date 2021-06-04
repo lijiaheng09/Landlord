@@ -61,7 +61,7 @@ inline VL SINGLEVL(double x){
 	return f(x)-2;
 }
 inline VL PAIRVL(double x){
-	if (x<13) return x==12?6:f(x)*1.2-1.5;
+	if (x<13) return max(SINGLEVL(x)*2,f(x)*1.2-1.5);
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
