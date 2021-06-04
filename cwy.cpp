@@ -49,7 +49,7 @@ inline int fh(int x){
 	else return 0;
 }
 
-int zs;
+int zs,QJ;
 void suan(VL vl){
 
 	VL shangvl = 0;
@@ -206,8 +206,8 @@ void suan(VL vl){
 			else break;
 		}
 	}
-	//cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
-	if(lastValidCombo.comboType==CardComboType::PASS)t-=(cardcnt<myCards.size()?max(6-cardcnt,0):0);
+	// cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<" "<<cardcnt<<" "<<myCards.size()<<endl;
+	if(lastValidCombo.comboType==CardComboType::PASS)t-=(cardcnt<QJ?max(6-cardcnt,0):0);
 	mxvl=max(mxvl,shangvl+t);
 }
 void shun2(VL vl, bool o){
@@ -411,6 +411,7 @@ double eval(const CardCombo & PAI, bool o){
 	int t1 = count_zha();
 
 	for (auto x :PAI.cards) --pai[card2level(x)];
+	QJ=0; FOR(i,0,14)QJ+=pai[i];
 
 	int t2 = count_zha();
 
@@ -481,7 +482,7 @@ double eval(const CardCombo & PAI, bool o){
 
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<PAIRVL(5)<<" aaaaaaaaaa "<<SINGLEVL(10)<<endl;
-	// cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
+	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<PAIRVL(2)<<" "<<mxvl+tradeoff*CHUVL<<endl;
 	static const double mu = 0.1; // 估价每大 1, 出牌概率大 e^mu
 	
 	return (mxvl+tradeoff*CHUVL) * mu;
