@@ -152,13 +152,15 @@ vector<CardCombo> getCandidates() {
 	// 实在找不到啊
 	// 最后看一下能不能炸吧
 
-	for (Level i = 0; i < level_joker; i++)
-		if (counts[i] == 4 && (lastValidCombo.comboType != CardComboType::BOMB || i > lastValidCombo.packs[0].level)) // 如果对方是炸弹，能炸的过才行
-		{
-			// 还真可以啊……
-			Card bomb[] = {Card(i * 4), Card(i * 4 + 1), Card(i * 4 + 2), Card(i * 4 + 3)};
-			r.push_back(CardCombo(bomb, bomb + 4));
-		}
+	if (lastValidCombo.comboType != CardComboType::ROCKET) {
+		for (Level i = 0; i < level_joker; i++)
+			if (counts[i] == 4 && (lastValidCombo.comboType != CardComboType::BOMB || i > lastValidCombo.packs[0].level)) // 如果对方是炸弹，能炸的过才行
+			{
+				// 还真可以啊……
+				Card bomb[] = {Card(i * 4), Card(i * 4 + 1), Card(i * 4 + 2), Card(i * 4 + 3)};
+				r.push_back(CardCombo(bomb, bomb + 4));
+			}
+	}
 
 	// 有没有火箭？
 	if (counts[level_joker] + counts[level_JOKER] == 2)
@@ -360,10 +362,12 @@ CardCombo getAction() {
 		c.first *= 0.03*cardRemaining[myPosition];
 		
 	}
+	int debug = 0;
 	for (auto &&d : dists) {
 		dist = d.first;
 		myCards = dist[myPosition];
 		for (auto &c : candidates) {
+			debug++;
 			int r = procSearch(c.second);
 #ifdef _LOG
 			// cerr << r << endl;
