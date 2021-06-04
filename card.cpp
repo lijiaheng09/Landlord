@@ -52,6 +52,7 @@ int lastValidComboPosition = -1;
 short cardRemaining[PLAYER_COUNT] = {17, 17, 17};
 
 // 我是几号玩家（0-地主，1-农民甲，2-农民乙）
+int myRealPosition;
 int myPosition;
 
 // 地主位置

@@ -197,16 +197,13 @@ CardSet cardAdd(const CardSet &s, const CardCombo &c) {
 	return r;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEvalSc(int num, int &max_sc, bool worstCase = 0) {
-	max_sc = 1;
+vector<pair<double, CardCombo>> getCandidatesEval(int num, bool worstCase) {
 	vector<pair<double, CardCombo>> candidates;
 	double s = 0.0;
 	for (auto &&c : getCandidates()) {
 		double v = exp(eval(c, worstCase));
 		candidates.push_back({v, c});
 		s += v;
-		if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
-			max_sc <<= 1;
 	}
 	for (auto &c : candidates)
 		c.first /= s;
@@ -216,9 +213,18 @@ vector<pair<double, CardCombo>> getCandidatesEvalSc(int num, int &max_sc, bool w
 	return candidates;
 }
 
-vector<pair<double, CardCombo>> getCandidatesEval(int num, bool worstCase) {
-	int dum;
-	return getCandidatesEvalSc(num, dum, worstCase);
+int getMaxSc() {
+	static int Num[MAX_LEVEL];
+	memset(Num, 0, sizeof(Num));
+	for (Card c : dist[myRealPosition])
+		Num[card2level(c)]++;
+	int ans = 1;
+	for (int i = 0; i < MAX_LEVEL; i++)
+		if (Num[i] == 4)
+			ans <<= 1;
+	if (Num[level_joker] && Num[level_JOKER])
+		ans <<= 1;
+	return ans;
 }
 
 double getCandidateProb(const CardCombo &c) {
@@ -281,13 +287,13 @@ int procSearch(const CardCombo &c) {
 		undoCombo();
 	}
 	
-	if (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET)
+	if (myPosition == myRealPosition && (c.comboType == CardComboType::BOMB || c.comboType == CardComboType::ROCKET))
 		ans *= 2;
 
 	return ans;
 }
 
-bool term_flag = 0;
+bool termFlag = 0;
 
 int search() {
 	static int cnt = 0;
@@ -296,22 +302,22 @@ int search() {
 		num = 2;
 	if (myCards.size() > 6)
 		num = 1;
-	int max_sc;
-	auto candidates = getCandidatesEvalSc(num, max_sc);
+	int maxSc = getMaxSc();
+	auto candidates = getCandidatesEval(num);
 	int ans = -INF;
 	for (auto &&cs : candidates) {
 		ans = max(ans, procSearch(cs.second));
 #ifndef _DEBUG
-		if (term_flag || (((++cnt) & 1023) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
+		if (termFlag || (((++cnt) & 1023) == 0 && clock() > 0.9 * CLOCKS_PER_SEC)) {
 #ifdef _LOG
-			if (!term_flag)
+			if (!termFlag)
 				cerr << "TERM" << endl;
 #endif
-			term_flag = 1;
+			termFlag = 1;
 			return ans;
 		}
 #endif
-		if (ans == max_sc)
+		if (ans == maxSc)
 			break;
 	}
 	return ans;
@@ -373,10 +379,10 @@ CardCombo getAction() {
 			// cerr << r << endl;
 #endif
 			c.first += d.second * r;
-			if (term_flag)
+			if (termFlag)
 				break;
 		}
-		if (term_flag)
+		if (termFlag)
 			break;
 	}
 #ifdef _LOG

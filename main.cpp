@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 #endif
 	// srand(time(nullptr));
 	BotzoneIO::read();
+	myRealPosition = myPosition;
 
 	if (stage == Stage::BIDDING)
 	{
