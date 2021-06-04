@@ -18,7 +18,10 @@ typedef double VL;
 double tradeoff = 0.8;
 const VL INFV = 500;
 const VL VLRNG = 1000000000;
+int nds[15],ndl[15];
+int nd[6],ND[6];
 bool guo;
+int VEL[15],VES[15];
 int VE[6],ve[6];
 int DAS[15],DAL[15],DA[6];
 VL mxvl;
@@ -30,7 +33,8 @@ int pia[20];
 int pai[50]={0};
 int fl,qj;
 
-
+CardCombo PAII;
+bool O;
 
 inline int fh(int x){
 	if (x>0) return 1;
@@ -105,9 +109,7 @@ inline VL INVALIDVL(){
 int zs;
 void suan(VL vl){
 
-	int cardcnt=0;
-	FOR(i,0,14)cardcnt+=pai[i];
-	if (!guo){
+	for (int ald=int(guo);ald<=0;++ald){
 
 		if (zha!=-1){
 			static int s[5];
@@ -122,12 +124,16 @@ void suan(VL vl){
 			int ci=s[4]+s[3]+max(s[1]+s[2]-s[3],0);
 			FOR(i,5,12) ci-=ves[i];
 			FOR(i,3,12) ci-=vel[i];
+			FOR(i,1,4) ci-=ve[i];
 			if (ci<=niu+1){
 				mxvl=INFV;
 				return;
 			}
 		}
 		else{
+
+			
+
 			static int s[5];
 			s[1]=s[2]=s[3]=s[4]=0;
 			FOR(i,0,14) if (pai[i]){
@@ -136,33 +142,77 @@ void suan(VL vl){
 			int wozha=s[4];
 
 			FOR(i,1,4) VE[i]=ve[i];
+			FOR(i,1,4) ND[i]=nd[i];
+			FOR(i,5,12) VES[i]=ves[i];
+			FOR(i,3,12) VEL[i]=vel[i];
 
 
-			FOR(i,0,14) if (pai[i]){
-				if (pai[i]<=3)
-					ve[pai[i]]+=fh(i-DA[pai[i]]);
-				
+			bool gg=0;
+			FOR(i,3,12) if (ndl[i]>0){
+				if (wozha) --wozha,++VEL[i];
+				else {gg=1;break;}
+			}
+			if (gg) break;
+			FOR(i,5,12) if (nds[i]>0){
+				if (wozha) --wozha,++VES[i];
+				else {gg=1;break;}
+			}
+			if (gg) break;
+
+			FOR(i,0,12) if (pai[i]){
+				if (pai[i]<=3){
+					VE[pai[i]]+=fh(i-DA[pai[i]]);
+					ND[pai[i]]-=(fh(i-DA[pai[i]])==1);
+				}
 			}
 			if (pai[13] && pai[14]){
-				ve[1]-=2;
+				
 				++wozha;
 			}
-			int san=s[3];
-			if (ve[2]<0){
-				int t=min(-ve[2],san);
-				san-=t;
-				ve[2]+=t;
+			else{
+				if (pai[13]){
+					VE[1]+=fh(13-DA[1]);
+					ND[1]-=(fh(13-DA[1])==1);
+				}
+				if (pai[14]){
+					VE[1]+=fh(14-DA[1]);
+					ND[1]-=(fh(14-DA[1])==1);
+				}
 			}
-			if (ve[1]<0){
-				int t=min(-ve[1],san);
-				san-=t;
-				ve[1]+=t;
-			}
-			int ci=min(0,ve[1])+min(ve[2],0)+min(0,ve[3])+wozha;
-			FOR(i,5,12) ci+=min(0,ves[i]);
-			FOR(i,3,12) ci+=min(0,vel[i]);
 
-			FOR(i,1,4) ve[i]=VE[i];
+			FOR(i,1,3)
+				if (ND[i]>0){
+					if (wozha) --wozha,--ND[i],++VE[i];
+					else{gg=1;break;}
+				}
+			if (gg) break;
+
+			int san=s[3];
+			if (VE[2]<0){
+				int t=min(-VE[2],san);
+				san-=t;
+				VE[2]+=t;
+			}
+			if (VE[1]<0){
+				int t=min(-VE[1],san);
+				san-=t;
+				VE[1]+=t;
+			}
+
+
+			int ci=min(0,VE[1])+min(VE[2],0)+min(0,VE[3])+wozha;
+			FOR(i,5,12) ci+=min(0,VES[i]);
+			FOR(i,3,12) ci+=min(0,VEL[i]);
+
+if (PAII.comboType == CardComboType::SINGLE){
+		if (PAII.cards[0]==45 && SZ(dist[myPosition])<=10){
+			if (ci>=-1){
+				cout<<O<<endl;
+				cout<<"cwy"<<endl;
+				int tt=1;
+			}
+		}
+	}
 
 			if (ci>=-1){
 				mxvl=INFV;
@@ -174,6 +224,8 @@ void suan(VL vl){
 
 
 
+	int cardcnt=0;
+	FOR(i,0,14)cardcnt+=pai[i];
 
 	static double one[50];
 	static double two[50];
@@ -236,8 +288,10 @@ void shun2(VL vl, bool o){
 						if (r==tmp2[j]) break;
 					}
 					ves[j-i+1]+=fh(tmp2[j]-DAS[j-i+1]);
+					nds[j-i+1]-=(fh(tmp2[j]-DAS[j-i+1])==1);
 					suan(vl+STRAIGHTVL(tmp2[i],j-i+1));
 					ves[j-i+1]-=fh(tmp2[j]-DAS[j-i+1]);
+					nds[j-i+1]+=(fh(tmp2[j]-DAS[j-i+1])==1);
 				}
 				else break;
 			FOR(t,tmp2[i],r) ++pai[t];
@@ -261,8 +315,10 @@ void shun1(VL vl){
 					if (r==tmp1[j]) break;
 				}
 				ves[j-i+1]+=fh(tmp1[j]-DAS[j-i+1]);
+				nds[j-i+1]-=(fh(tmp1[j]-DAS[j-i+1])==1);
 				shun2(vl+STRAIGHTVL(tmp1[i],j-i+1),1);
 				ves[j-i+1]-=fh(tmp1[j]-DAS[j-i+1]);
+				nds[j-i+1]+=(fh(tmp1[j]-DAS[j-i+1])==1);
 			}
 			else break;
 		FOR(t,tmp1[i],r) ++pai[t];
@@ -287,8 +343,10 @@ void lian(){
 				}
 
 				vel[j-i+1]+=fh(tmp[j]-DAL[j-i+1]);
+				ndl[j-i+1]-=(fh(tmp[j]-DAL[j-i+1])==1);
 				shun1(STRAIGHT2VL(tmp[i],j-i+1) );
 				vel[j-i+1]-=fh(tmp[j]-DAL[j-i+1]);
+				ndl[j-i+1]+=(fh(tmp[j]-DAL[j-i+1])==1);
 			}
 			else break;
 		FOR(t,tmp[i],r) pai[t] += 2;
@@ -302,6 +360,7 @@ double evalCards(const CardSet & PAI){
 	for (auto x : PAI){
 		++pai[card2level(x)];
 	}
+	guo=1;
 	mxvl = -VLRNG;
 	lian();
 	return 1.0*mxvl;
@@ -310,6 +369,21 @@ double evalCards(const CardSet & PAI){
 }
 
 double eval(const CardCombo & PAI, bool o){
+
+
+	if (SZ(PAI.cards)==SZ(dist[myPosition])){
+		return INFV;
+	}
+
+
+	O=o;
+	PAII=PAI;
+
+	if (PAI.comboType == CardComboType::SINGLE){
+		if (PAI.cards[0]==45 && SZ(dist[myPosition])<=10){
+			int tt=1;
+		}
+	}
 
 	zha=-1;
 	DA[1]=DA[2]=DA[3]=-1;
@@ -389,7 +463,11 @@ double eval(const CardCombo & PAI, bool o){
 	ve[4]=0;
 	guo=0;
 
-
+	nd[1]=0;
+	nd[2]=0;
+	nd[3]=0;
+	nd[4]=0;
+	FOR(i,3,12) nds[i]=ndl[i]=0;
 
 	
 
@@ -406,14 +484,14 @@ double eval(const CardCombo & PAI, bool o){
 	if(PAI.comboType==CardComboType::SINGLE&&card2level(PAI.cards[0])<=10)zs=1; else zs=0;
 	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
 	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:0)),guo=1;
-	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level),ve[1]-=(PAI.packs[0].level<DA[1]);
-	else if (PAI.comboType == CardComboType::PAIR) CHUVL += PAIRVL(PAI.packs[0].level),ve[2]-=(PAI.packs[0].level<DA[2]);
-	else if (PAI.comboType == CardComboType::STRAIGHT) CHUVL += STRAIGHTVL(PAI.packs.back().level, SZ(PAI.packs)),ves[SZ(PAI.packs)]-=(PAI.packs[0].level<DAS[SZ(PAI.packs)]);
-	else if (PAI.comboType == CardComboType::STRAIGHT2) CHUVL += STRAIGHT2VL(PAI.packs.back().level, SZ(PAI.packs)),vel[SZ(PAI.packs)]-=(PAI.packs[0].level<DAL[SZ(PAI.packs)]);
-	else if (PAI.comboType == CardComboType::TRIPLET) CHUVL += TRIPLETVL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]);
-	else if (PAI.comboType == CardComboType::TRIPLET1) CHUVL += TRIPLET1VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]);
-	else if (PAI.comboType == CardComboType::TRIPLET2) CHUVL += TRIPLET2VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]);
-	else if (PAI.comboType == CardComboType::BOMB) CHUVL += BOMBVL(PAI.packs[0].level),ve[4]-=(PAI.packs[0].level<zha);
+	else if (PAI.comboType == CardComboType::SINGLE) CHUVL += SINGLEVL(PAI.packs[0].level),ve[1]-=(PAI.packs[0].level<DA[1]),nd[1]+=(PAI.packs[0].level<DA[1]);
+	else if (PAI.comboType == CardComboType::PAIR) CHUVL += PAIRVL(PAI.packs[0].level),ve[2]-=(PAI.packs[0].level<DA[2]),nd[2]+=(PAI.packs[0].level<DA[2]);
+	else if (PAI.comboType == CardComboType::STRAIGHT) CHUVL += STRAIGHTVL(PAI.packs.back().level, SZ(PAI.packs)),ves[SZ(PAI.packs)]-=(PAI.packs[0].level<DAS[SZ(PAI.packs)]),nds[SZ(PAI.packs)]+=(PAI.packs[0].level<DAS[SZ(PAI.packs)]);
+	else if (PAI.comboType == CardComboType::STRAIGHT2) CHUVL += STRAIGHT2VL(PAI.packs.back().level, SZ(PAI.packs)),vel[SZ(PAI.packs)]-=(PAI.packs[0].level<DAL[SZ(PAI.packs)]),ndl[SZ(PAI.packs)]+=(PAI.packs[0].level<DAL[SZ(PAI.packs)]);
+	else if (PAI.comboType == CardComboType::TRIPLET) CHUVL += TRIPLETVL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
+	else if (PAI.comboType == CardComboType::TRIPLET1) CHUVL += TRIPLET1VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
+	else if (PAI.comboType == CardComboType::TRIPLET2) CHUVL += TRIPLET2VL(PAI.packs[0].level),ve[3]-=(PAI.packs[0].level<DA[3]),nd[3]+=(PAI.packs[0].level<DA[3]);
+	else if (PAI.comboType == CardComboType::BOMB) CHUVL += BOMBVL(PAI.packs[0].level),ve[4]-=(PAI.packs[0].level<zha),nd[4]+=(PAI.packs[0].level<zha);
 	else if (PAI.comboType == CardComboType::QUADRUPLE2) CHUVL += QUADRUPLE2VL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::QUADRUPLE4) CHUVL += QUADRUPLE4VL(PAI.packs[0].level);
 	else if (PAI.comboType == CardComboType::PLANE) CHUVL += PLANEVL(PAI.packs[0].level);
