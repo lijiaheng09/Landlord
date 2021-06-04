@@ -207,7 +207,8 @@ void suan(VL vl){
 		}
 	}
 	//cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
-	mxvl=max(mxvl,shangvl+t-(cardcnt<myCards.size()?max(6-cardcnt,0):0));
+	if(lastValidCombo.comboType==CardComboType::PASS)t-=(cardcnt<myCards.size()?max(6-cardcnt,0):0);
+	mxvl=max(mxvl,shangvl+t);
 }
 void shun2(VL vl, bool o){
 	static int ts2;
