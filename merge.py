@@ -4,6 +4,7 @@ files = [
 	'main.h',
 	'card.cpp',
 	'ljh.cpp',
+	'magic.hpp',
 	'cwy.cpp',
 	'wzp.cpp',
 	'main.cpp'
