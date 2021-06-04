@@ -204,15 +204,6 @@ void suan(VL vl){
 			FOR(i,5,12) ci+=min(0,VES[i]);
 			FOR(i,3,12) ci+=min(0,VEL[i]);
 
-if (PAII.comboType == CardComboType::SINGLE){
-		if (PAII.cards[0]==45 && SZ(dist[myPosition])<=10){
-			if (ci>=-1){
-				cout<<O<<endl;
-				cout<<"cwy"<<endl;
-				int tt=1;
-			}
-		}
-	}
 
 			if (ci>=-1){
 				mxvl=INFV;
@@ -373,14 +364,6 @@ double eval(const CardCombo & PAI, bool o){
 	}
 
 
-	O=o;
-	PAII=PAI;
-
-	if (PAI.comboType == CardComboType::SINGLE){
-		if (PAI.cards[0]==45 && SZ(dist[myPosition])<=10){
-			int tt=1;
-		}
-	}
 
 	zha=-1;
 	DA[1]=DA[2]=DA[3]=-1;
