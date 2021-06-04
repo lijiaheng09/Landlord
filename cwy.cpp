@@ -50,7 +50,10 @@ inline int fh(int x){
 }
 inline VL PASSVL(){
 	return (lastValidComboPosition!=landlordPosition&&
-	myPosition!=landlordPosition)?0:-qj;
+	myPosition!=landlordPosition)?
+	log(max(1,-cardRemaining[lastValidComboPosition]-
+	cardRemaining[landlordPosition]+10)):
+	-qj;
 }
 inline double f(double x){
 	if(x<=8)return x/4;
@@ -481,11 +484,37 @@ double eval(const CardCombo & PAI, bool o){
 
 
 	vector<Card> cwy; FOR(i,0,14)FOR(j,0,pai[i]-1)cwy.pb(i*4+j);
-	qj=5; if((lastValidComboPosition+1)%3==myPosition)qj=3;
+	qj=5; if((lastValidComboPosition+1)%3==myPosition&&
+	myPosition==landlordPosition)qj=3;
 	if((CardCombo(cwy)).comboType!=CardComboType::INVALID)tradeoff=1.2;
 	else tradeoff=0.8;
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	VL CHUVL(0); fl=1;
+	if(myPosition!=landlordPosition&&cardRemaining[landlordPosition]==1){
+		if(lastValidCombo.comboType==CardComboType::PASS){
+			if(PAI.comboType==CardComboType::SINGLE){
+				if((myPosition+1)%3==landlordPosition)
+				CHUVL+=SINGLEVL(card2level(PAI.cards[0]))-10;
+				else CHUVL+=SINGLEVL(card2level(PAI.cards[0]))-5;
+			}
+		}else if(lastValidCombo.comboType==CardComboType::SINGLE){
+			if(PAI.comboType==CardComboType::SINGLE
+			&&(lastValidComboPosition+1)%3==myPosition){
+				CHUVL+=SINGLEVL(card2level(PAI.cards[0]))-
+				SINGLEVL(0);
+			}
+		}
+
+	}
+	if(myPosition==landlordPosition&&
+	(cardRemaining[(myPosition+1)%3]==1||
+	cardRemaining[(myPosition+1)%3]==2)){
+		if(lastValidCombo.comboType==CardComboType::PASS){
+			if(PAI.comboType==CardComboType::SINGLE){
+				CHUVL+=SINGLEVL(card2level(PAI.cards[0]))-10;
+			}
+		}
+	}
 	if(PAI.comboType==CardComboType::SINGLE&&card2level(PAI.cards[0])<=10)zs=1; else zs=0;
 	if (PAI.comboType == CardComboType::PASS) CHUVL += min(PASSVL(),
 	(lastValidCombo.comboType==CardComboType::SINGLE?-0.5:
