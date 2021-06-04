@@ -1,8 +1,13 @@
+#ifndef MAGIC_HPP
+#define MAGIC_HPP
+
+#include <bits/stdc++.h>
 #include "card.h"
 #include "main.h"
-#include "magic.h"
 
-using namespace std;
+typedef double VL;
+
+int fl, qj;
 
 inline VL f(int x){
 	if(x<=8)return x/4.0;
@@ -16,12 +21,12 @@ namespace PreProcessing {
 	}
 	inline VL PAIRVL(int x){
 		if (x<13) return x==12?6:f(x)*1.2-1.5;
-		else assert(0);
+		else return 0;
 	}
 
 #define PREP(F) \
-	const array<VL, MAX_LEVEL> F##_PRE = ([]() { \
-		array<VL, MAX_LEVEL> R; \
+	const std::array<VL, MAX_LEVEL> F##_PRE = ([]() { \
+		std::array<VL, MAX_LEVEL> R; \
 		for (int i = 0; i < MAX_LEVEL; i++) \
 			R[i] = PreProcessing::F(i); \
 		return R; \
@@ -31,8 +36,6 @@ namespace PreProcessing {
 	PREP(PAIRVL);
 #undef PREP
 }
-
-int fl,qj;
 
 #define PREPD(F) \
 	VL F(int x) { return PreProcessing::F##_PRE[x]; }
@@ -52,7 +55,7 @@ inline VL STRAIGHT2VL(int l,int len){
 	return l/4.0-(1-fl)*(len-3);
 }
 inline VL TRIPLETVL(int x){
-	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);
+	return std::max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);
 }
 inline VL TRIPLET1VL(int x){
 	return TRIPLETVL(x);
@@ -61,7 +64,7 @@ inline VL TRIPLET2VL(int x){
 	return TRIPLETVL(x)+(fl*0.5);
 }
 inline VL BOMBVL(int x){
-	return max(PAIRVL(x)+PAIRVL(x),3+x/4.0)-(fl*qj);
+	return std::max (PAIRVL(x)+PAIRVL(x),3+x/4.0)-(fl*qj);
 }
 inline constexpr VL QUADRUPLE2VL(int x){
 	return 1;
@@ -93,3 +96,5 @@ inline VL ROCKETVL(){
 inline constexpr VL INVALIDVL(){
 	return -100;
 }
+
+#endif
