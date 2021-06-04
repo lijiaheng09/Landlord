@@ -54,12 +54,10 @@ inline VL PAIRVL(double x){
 	else assert(0);
 }
 inline VL STRAIGHTVL(double l, double len){
-	return (l+len/2)/4-(1-fl)*((len-5)/2+
-	max((double)0,8-(myCards.size()-len)));
+	return (l+len/2)/4-(1-fl)*(len-5)/2;
 }
 inline VL STRAIGHT2VL(double l,double len){
-	return l/4-(1-fl)*((len-3)+
-	max((double)0,6-(myCards.size()-len)));
+	return l/4-(1-fl)*(len-3);
 }
 inline VL TRIPLETVL(double x){
 	return max(PAIRVL(x)+SINGLEVL(x),f(x)*1.2-1)-(fl&&x==12?qj:0);
@@ -107,7 +105,8 @@ inline VL INVALIDVL(){
 int zs;
 void suan(VL vl){
 
-
+	int cardcnt=0;
+	FOR(i,0,14)cardcnt+=pai[i];
 	if (!guo){
 
 		if (zha!=-1){
@@ -218,7 +217,7 @@ void suan(VL vl){
 	else if (pai[13]) t += SINGLEVL(13);
 	else if (pai[14]) t += SINGLEVL(14);
 	//cerr<<t<<" "<<ones<<" "<<SINGLEVL(1)<<" "<<ones<<endl;
-	mxvl=max(mxvl,t);
+	mxvl=max(mxvl,t-(cardcnt<myCards.size()?max(6-cardcnt,0):0));
 }
 void shun2(VL vl, bool o){
 	static int ts2;
@@ -427,7 +426,7 @@ double eval(const CardCombo & PAI, bool o){
 	else if (PAI.comboType == CardComboType::INVALID) CHUVL += INVALIDVL();
 	fl=0; mxvl = -VLRNG;
 	// if(PAI.cards[0]!=43&&(PAI.cards[0]!=4||PAI.cards[1]!=6))return -100;
-	// for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
+	//for(auto i:PAI.cards)cerr<<i<<" "; cerr<<" alddddddd\n";
 	lian();
 
 
@@ -435,8 +434,9 @@ double eval(const CardCombo & PAI, bool o){
 
 	//FOR(i,0,14)cerr<<pai[i]<<" "; cerr<<endl;
 	//cerr<<PAIRVL(5)<<" aaaaaaaaaa "<<SINGLEVL(10)<<endl;
-	// cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
+	//cerr<<mxvl<<" fjzq "<<CHUVL<<" "<<zs<<" "<<mxvl+tradeoff*CHUVL<<endl;
 	static const double mu = 0.1; // 估价每大 1, 出牌概率大 e^mu
+	
 	return (mxvl+tradeoff*CHUVL) * mu;
 	
 }
