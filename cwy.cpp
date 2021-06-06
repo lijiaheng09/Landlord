@@ -51,7 +51,11 @@ inline int fh(int x){
 
 int zs,QJ;
 void suan(VL vl){
-
+/*
+			if (PAII.comboType == CardComboType::ROCKET){
+				int tt=1;
+			}
+*/
 	VL shangvl = 0;
 	for (int ald=int(guo);ald<=0;++ald){
 
@@ -70,6 +74,9 @@ void suan(VL vl){
 			FOR(i,5,12) ci-=ves[i];
 			FOR(i,3,12) ci-=vel[i];
 			FOR(i,1,4) ci-=ve[i];
+
+
+
 			if (ci<=niu+1){
 				shangvl = INFV+FAN*ZHAVL;
 				break;
@@ -308,8 +315,10 @@ double evalCards(const CardSet & PAI){
 }
 
 double eval(const CardCombo & PAI, bool o){
-
-
+/*
+	PAII=PAI;
+	O=o;
+*/
 	if (SZ(PAI.cards)==SZ(dist[myPosition])){
 		int t=(PAI.comboType == CardComboType::BOMB || PAI.comboType == CardComboType::ROCKET);
 		return INFV+t*ZHAVL;
@@ -413,7 +422,7 @@ double eval(const CardCombo & PAI, bool o){
 	for (auto x :PAI.cards) --pai[card2level(x)];
 	QJ=0; FOR(i,0,14)QJ+=pai[i];
 
-	int t2 = count_zha();
+	int t2 = count_zha()+(PAI.comboType == CardComboType::ROCKET || PAI.comboType == CardComboType::BOMB);
 
 	if (t1!=t2) guo=1;
 
