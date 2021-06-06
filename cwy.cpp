@@ -51,11 +51,11 @@ inline int fh(int x){
 
 int zs,QJ;
 void suan(VL vl){
-/*
+
 			if (PAII.comboType == CardComboType::ROCKET){
 				int tt=1;
 			}
-*/
+
 	VL shangvl = 0;
 	for (int ald=int(guo);ald<=0;++ald){
 
@@ -315,10 +315,10 @@ double evalCards(const CardSet & PAI){
 }
 
 double eval(const CardCombo & PAI, bool o){
-/*
+
 	PAII=PAI;
 	O=o;
-*/
+
 	if (SZ(PAI.cards)==SZ(dist[myPosition])){
 		int t=(PAI.comboType == CardComboType::BOMB || PAI.comboType == CardComboType::ROCKET);
 		return INFV+t*ZHAVL;
