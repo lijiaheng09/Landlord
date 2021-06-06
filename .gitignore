@@ -9,3 +9,4 @@ report.txt
 run
 .DS_Store
 res.cpp
+*.tmp
